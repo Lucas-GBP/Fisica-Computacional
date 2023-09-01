@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Aquecimento I: Operações básicas, condicionais, laços, funções</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='../style.css'>
+</head>
+<body>
+    <h1>
+        Aquecimento I:</br> Operações básicas, condicionais, laços, funções
+    </h1>
+    <section>
+        <p>
+            Faça um programa que contenha funções para converter números inteiros e positivos nas representações (a) binária para decimal; (b) decimal para binária; (c) binária para hexadecimal; (d) decimal para hexadecimal.
+        </p>
+        Input:
+        <input id="1_input">
+        <div>
+            <button id="1_button_binDec">bin > dec</button>
+            <button id="1_button_decBin">dec > bin</button>
+            <button id="1_button_binHex">bin > hex</button>
+            <button id="1_button_decHex">dec > hex</button>
+        </div>
+        Output:
+        <output id="1_output">
+    </section>
+    <section>
+        <p>
+            Faça um programa que compute o "dígito verificador" de um número de matrícula com dígitos ( ), multiplicando o dígito por um peso , somando tudo e tomando o resto da divisão por 10. Por exemplo, o dígito verificador do número de matrículas 20130456 seria dado por (2 × 2 + 0 × 3 + 1 × 4 + 3 × 5 + 0 × 6 + 4 × 7 + 5 × 8 + 6 × 9) mod 10 = 145 mod 10 = 5.
+        </p>
+        Número de matricula:
+        <input id="2_input"/><br/>
+        <button id="2_button">checa número</button><br/>
+        Dígito verificador:
+        <output id="2_output"/>
+    </section>
+    <section>
+        <p>
+            Considere números de matrícula com um prefixo fixo "201304" e um sufixo que varia de "01" a "99" (isto é, números que vão de "20130401" a "20130499"). Considerando o algoritmo desenvolvido para o problema anterior, quantas vezes aparecem os dígitos verificadores 0, 5 e 9 para este conjunto de números?
+        </p>
+        n(0) = <output id="3_output_n0"></output>
+        <br/>
+        n(5) = <output id="3_output_n5"/></output>
+        <br/>
+        n(9) = <output id="3_output_n9"/></output>
+    </section>
+    <section>
+        <p>
+            O seno de um ângulo (em radianos) pode ser estimado através da série: 
+            <br/>
+            Faça um programa que contenha uma função que retorne o número de termos necessários para que o seno de seja calculado corretamente com uma tolerância menor do que .
+        </p>
+        Argumento:<br/>
+        <input id="4_input_argumento"/><br/>
+        Tolerância:<br/>
+        <input id="4_input_tolerancia"/><br/>
+        <button id="4_button">calcula</button><br/>
+        Valor exato:<br/>
+        <output id="4_output_exato"></output><br/>
+        Valor aproximado:<br/>
+        <output id="4_output_aproximado"></output><br/>
+        Número de termos:<br/>
+        <output id="4_output_termos"></output>
+    </section>
+    <section>
+        <p>
+            Considere um oscilador harmônico amortecido cuja amplitude em função do tempo é dada por:
+            <br/>
+            a(t) = a0 cos(ωt)e−bt
+            <br/>
+            Faça um programa que contenha uma função que receba como parâmetros a amplitude inicial , a frequência angular , o coeficiente de amortecimento e o tempo e retorne o valor da amplitude nesse instante para esses parâmetros, ou crie uma classe OHA cujo construtor recebe estes parâmetros e que tenha um método que recebe o tempo e retorna a amplitude para objetos instanciados a partir da classe.
+            <br/>
+            Utilize a sua função/classe com , e para determinar o instante em que a amplitude da oscilação atinge, pela primeira vez, a metade da amplitude inicial. Note que esta pergunta tem, em princípio, uma resposta bem definida (há um instante em que isto acontece) mas requer mais detalhes para ser respondida computacionalmente: com que precisão? Precisão na amplitude? Precisão no tempo? Faça e justifique as suas escolhas.
+            <br/>
+            t1/2 = (0,54 ± 0,01) s
+        </p>
+        Amplitude Inicia:<input id="5_input_a0"/>
+        Frequência Angular:<input id="5_input_omega"/>
+        coeficiente de Amortecimento:<input id="5_input_b"/>
+        Tolerancia: <input id="5_input_error"/><br/>
+        <button id="5_button">Calcular</button><br/>
+        tempo de meia aplitude:
+        <output id="5_output"></output>
+    </section>
+    <a href="../index.html">home</a>
+    <script src="aquecimentoUmCode.js"></script>
+</body>
+</html>

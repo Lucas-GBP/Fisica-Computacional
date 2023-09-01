@@ -1,0 +1,14 @@
+body {
+    background-color: #000;
+    color: #fff
+}
+
+h1 {
+    text-align: center
+}
+
+section {
+    margin: 2.5rem;
+    padding: 1.25rem 2.5rem;
+    background-color: #333;
+}
