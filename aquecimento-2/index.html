@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='stylesheet' type='text/css' media='screen' href='../style.css'>
+    <title>Aquecimento 2</title>
+</head>
+<body>
+    <h1>Aquecimento II:<br/> Números aleatórios</h1>
+    <section>
+        <p>
+            Faça um programa que contenha uma função que simule uma moeda honesta, retornando, em média, "0" 50% das vezes e "1" 50% das vezes (um bit). Utilize esta função para construir uma outra função que retorne bytes aleatórios (ou seja, sequências de 8 bits aleatoriamente escolhidos).
+        </p>
+        <button id="1_button_bit">
+            gera bit
+        </button><br/>
+        <output id="1_output_bit"></output><br/>
+        <button id="1_button_byte">
+            gera byte
+        </button><br/>
+        <output id="1_output_byte"></output><br/>
+    </section>
+    <section>
+        <p>
+            As letras "A", "C", "G", "T" utilizadas para representar os nucleotídeos do código genético, são representadas por "01000001", "01000011", "01000111" e "01010100" no chamado "código binário ASCII". Faça um programa que utilize as funções desenvolvidas para o item anterior para gerar 1 milhão de bytes e mostre quantos "A"s, "C"s, "G"s e "T"s foram gerados.
+        </p>
+        <output id="2_output_A"></output><br/>
+        <output id="2_output_C"></output><br/>
+        <output id="2_output_G"></output><br/>
+        <output id="2_output_T"></output><br/>
+    </section>
+    <section>
+        <p>
+            Faça um programa que gere pares de números aleatórios que estejam dentro de um círculo de raio unitário.
+        </p>
+        <button id="3_button">gera (x,y) no círculo</button><br/>
+        <output id="3_output"></output><br/>
+    </section>
+    <section>
+        <p>
+            Faça um programa que gere pares de números aleatórios que estejam dentro de um triângulo equilátero de lado unitário cujo baricentro está na origem e cuja base é paralela ao eixo.
+        </p>
+        <button id="4_button">gera (x,y) no triângulo</button><br/>
+        <output id="4_output"></output><br/>
+    </section>
+    <section>
+        <p>
+            Faça um programa que gere números aleatórios "1", "2", "3" ou "4", tais que a quantidade de números aleatórios gerados esteja na proporção 1:2:3:4 (isto é, em média, para cada "1" gerado, são gerados 2 "2"s, 3 "3"s e 4 "4"s).
+        </p>
+        <button id="5_button">gera 1:2:3:4</button><br/>
+        <output id="5_output"></output><br/>
+    </section>
+    <section>
+        <p>
+            Faça um programa que contenha funções que gerem dois ângulos aleatórios e tais que e .
+        </p>
+        <button id="6_button">gera (omega, phi)</button><br/>
+        <output id="6_output"></output><br/>
+    </section>
+    <section>
+        <p>
+            Considere uma fonte de partículas em sistema de coordenadas esféricas em que a fonte está na origem e a posição de uma partícula emitida por ela é dada pela sua distância até a origem, pelo ângulo que o vetor posição faz com o eixo (tal que ) e pelo ângulo no plano (tal que e ). Considere um "detetor" plano, de raio , paralelo ao plano em . Utilize as funções do problema anterior para gerar pares de ângulos aleatórios que correspondam a emissões que sejam "detetadas" pelo "detetor".
+        </p>
+        Distância detector-fonte:
+        <input id="7_input_distancia"></input><br/>
+        Raio do detetor:
+        <input id="7_input_raio"></input><br/>
+        <button id="7_button">gera ângulos</button><br/>
+        Ângulos gerados:<br/>
+        <output id="7_output_angulos"></output><br/>
+        Detetado?<br/>
+        <output id="7_output_detectado"></output>
+    </section>
+    <section>
+        <p>
+            Faça um programa com uma função que gere dois números aleatórios e entre -2 e 2 para compor um número complezo e outra função que verifique se esse número está dentro ou fora do conjunto de Mandelbrot. O número será considerado dentro do conjunto de Mandelbrot se depois de interações o módulo do número , para , for menor do que 2 ( )
+        </p>
+        <input id="8_input"></input><br/>
+        <button id="8_button">gera complexo</button><br/>
+        <output id="8_output_complexo"></output><br/>
+        <output id="8_output_boolean"></output><br/>
+    </section>
+    
+    <script src="aquecimentoDoisCode.js"></script>
+</body>
+</html>
