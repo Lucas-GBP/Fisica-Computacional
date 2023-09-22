@@ -6,6 +6,8 @@
     <title>Aquecimento I: Operações básicas, condicionais, laços, funções</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel='stylesheet' type='text/css' media='screen' href='../style.css'>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <h1>
@@ -67,9 +69,9 @@
     <section>
         <p>
             Considere um oscilador harmônico amortecido cuja amplitude em função do tempo é dada por:
-            <br/>
-            a(t) = a0 cos(ωt)e−bt
-            <br/>
+            \[
+            a(t) = a_0 cos(\omega t)e^{-bt}
+            \]
             Faça um programa que contenha uma função que receba como parâmetros a amplitude inicial , a frequência angular , o coeficiente de amortecimento e o tempo e retorne o valor da amplitude nesse instante para esses parâmetros, ou crie uma classe OHA cujo construtor recebe estes parâmetros e que tenha um método que recebe o tempo e retorna a amplitude para objetos instanciados a partir da classe.
             <br/>
             Utilize a sua função/classe com , e para determinar o instante em que a amplitude da oscilação atinge, pela primeira vez, a metade da amplitude inicial. Note que esta pergunta tem, em princípio, uma resposta bem definida (há um instante em que isto acontece) mas requer mais detalhes para ser respondida computacionalmente: com que precisão? Precisão na amplitude? Precisão no tempo? Faça e justifique as suas escolhas.

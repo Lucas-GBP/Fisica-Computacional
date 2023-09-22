@@ -1,8 +1,7 @@
-// webpack.config.js
 const path = require("path");
 
 module.exports = {
-  mode: "development", // Defina o modo como "development" ou "production"
+  mode: "development",
   entry: {
     index: "./src/index.ts",
     aquecimento1: "./src/aquecimento1/index.ts",
@@ -14,13 +13,13 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
   },
   resolve: {
-    extensions: [".ts", ".js"], // Permitir a importação de arquivos .ts e .js
+    extensions: [".ts", ".js"],
   },
   module: {
     rules: [
       {
         test: /\.ts$/,
-        use: "ts-loader", // Use ts-loader para arquivos .ts
+        use: "ts-loader",
         exclude: /node_modules/,
       },
     ],
@@ -29,7 +28,7 @@ module.exports = {
     static: {
       directory: path.join(__dirname, "dist"),
     },
-    open: true, // Abre automaticamente o navegador
-    port: 8080, // Porta para o servidor de desenvolvimento
+    open: true,
+    port: 8080,
   },
 };

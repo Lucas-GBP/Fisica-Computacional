@@ -2,11 +2,15 @@ import Plotly from 'plotly.js-dist-min'
 //
 // HTML Elements and Constants
 //
-const TESTER = document.getElementById('tester')!;
-Plotly.newPlot( TESTER, [{
-x: [1, 2, 3, 4, 5],
-y: [1, 2, 4, 8, 16] }], {
-margin: { t: 0 } } );
+const e3_1 = {
+    output: document.getElementById("1_output") as HTMLOutputElement
+};
+const e3_2 = {
+    output: document.getElementById("2_output") as HTMLOutputElement
+};
+const e3_3 = {
+    output: document.getElementById("3_output") as HTMLOutputElement
+};
 
 //
 // Questão 1
@@ -30,7 +34,7 @@ const wavesArray:wave[] = [
 ]
 
 function waveSum(waves: wave[], time_0:number, time_f:number, step:number){
-    const values:{x:number, y:number}[] = [];
+    const values:{x:number[], y:number[]}= {x: [], y: []};
 
     if(step <= 0){
         return undefined;
@@ -38,11 +42,11 @@ function waveSum(waves: wave[], time_0:number, time_f:number, step:number){
 
     let i = 0
     for(let t = time_0; t < time_f; t += step){
-        values[i].x = t;
+        values.x[i] = t;
 
-        values[i].y = 0;
+        values.y[i] = 0;
         for(let j = 0; j < waves.length; j++){
-            values[i].y += waves[j].a*Math.cos(waves[j].k*t);
+            values.y[i] += waves[j].a*Math.cos(waves[j].k*t);
         }
 
         i++;
@@ -50,6 +54,19 @@ function waveSum(waves: wave[], time_0:number, time_f:number, step:number){
 
     return values;
 }
+e3_1.output.style.margin = "auto"
+const waveValues = waveSum(wavesArray, -2*Math.PI, 2*Math.PI, 0.001);
+if(waveValues != undefined){
+    Plotly.newPlot(
+        e3_1.output,
+        [{
+            x: waveValues.x,
+            y: waveValues.y,
+            type: 'scatter'
+        }],
+    );
+}
+
 //
 // Questão 2
 //
@@ -74,7 +91,11 @@ function pascalTriangle(size:number){
 }
 
 const pascal = pascalTriangle(12);
-console.log(pascal);
+if(pascal != undefined){
+    for(let i = 0; i < pascal.length; i++){
+        e3_2.output.innerHTML += `<span style="display: table; margin: 0 auto">${pascal[i]}</span></br>`;
+    }
+}
 
 //
 // Questão 3
@@ -345,6 +366,37 @@ function diceCenter(length:number, diceDensity:number, dotDensity:number, dotRad
     return calCenterMass(allMassPoints);
 }
 
-console.log(diceCenter(1, 0, 1, 0.1));
-console.log(diceCenter(1, 1, 1, 0.1));
-console.log(diceCenter(1, 1, 8, 0.1));
+const dice = [
+    diceCenter(1, 0, 1, 0.1),
+    diceCenter(1, 1, 1, 0.1),
+    diceCenter(1, 1, 8, 0.1)
+]
+e3_3.output.innerHTML = `
+    <table>
+        <tr>
+            <td>Razão</td>
+            <td>x</td>
+            <td>y</td>
+            <td>z</td>
+        </tr>
+        <tr>
+            <td>0/1</td>
+            <td>${dice[0].coord.x}</td>
+            <td>${dice[0].coord.y}</td>
+            <td>${dice[0].coord.z}</td>
+        </tr>
+        <tr>
+            <td>1/1</td>
+            <td>${dice[1].coord.x}</td>
+            <td>${dice[1].coord.y}</td>
+            <td>${dice[1].coord.z}</td>
+        </tr>
+        <tr>
+            <td>1/8</td>
+            <td>${dice[2].coord.x}</td>
+            <td>${dice[2].coord.y}</td>
+            <td>${dice[2].coord.z}</td>
+        </tr>
+    </table>
+`
+console.log(dice);
