@@ -6,7 +6,8 @@ module.exports = {
     index: "./src/index.ts",
     aquecimento1: "./src/aquecimento1/index.ts",
     aquecimento2: "./src/aquecimento2/index.ts",
-    aquecimento3: "./src/aquecimento3/index.ts"
+    aquecimento3: "./src/aquecimento3/index.ts",
+    aquecimento4: "./src/aquecimento4/index.ts",
   },
   output: {
     filename: "[name].bundle.js",
