@@ -15,11 +15,11 @@ const e3_3 = {
 //
 // Questão 1
 //
-type wave = {
+export type wave = {
     k:number,   //frequência
     a:number    //amplitude
 }
-const wavesArray:wave[] = [
+export const wavesArray:wave[] = [
     {k:5, a:0.5},
     {k:6, a:0.6},
     {k:7, a:0.7},
@@ -33,11 +33,11 @@ const wavesArray:wave[] = [
     {k:15, a:0.5},
 ]
 
-function waveSum(waves: wave[], time_0:number, time_f:number, step:number){
+export function waveSum(waves: wave[], time_0:number, time_f:number, step:number){
     const values:{x:number[], y:number[]}= {x: [], y: []};
 
     if(step <= 0){
-        return undefined;
+        return values;
     }
 
     let i = 0

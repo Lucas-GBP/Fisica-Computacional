@@ -24,12 +24,8 @@
                 \Delta &= (x_1-x_2)(x_1-x_3)(x_2-x_3)
             \end{split}\]
         </p>
-        <output id="1_output_y(x)">
-
-        </output>
-        <output id="1_output_y(t)x(t)">
-
-        </output>
+        <output id="1_output_y(x)"></output>
+        <output id="1_output_y(t)x(t)"></output>
     </section>
 
     <section>
@@ -41,6 +37,30 @@
             tempo de passagem pelos sensores, é possível determinar a velocidade média do
             móvel em cada trecho e, a partir disso, sua aceleração.
         </p>
+
+        <output id="2_output"></output>
+    </section>
+
+    <section>
+        <p>
+            Um pacote de ondas é a soma de várias ondas com diferentes números de onda e amplitudes, escolhidos de maneira bastante peculiar. Há uma onda predominante, com número de onda e amplitude quaisquer, à qual são somadas muitas outras ondas com números de onda progressivamente maiores e menores e com amplitudes progressivamente menores.
+        </p>
+        <p>
+            A tabela a seguir apresenta os parâmetros de 11 ondas; na primeira linha estão os valores dos números de onda de cada onda \(k_i\) e na segunda linha estão as respectivas amplitudes \(a_i\).
+            $$\begin{array}{cccccccccccccccc}
+                \hline
+                k_i & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15\\
+                a_i & 0,5 & 0,6 & 0,7 & 0,8 & 0,9 & 1,0 & 0,9 & 0,8 & 0,7 & 0,6 & 0,5\\
+                \hline
+            \end{array}$$
+        </p>
+        <p>
+            Neste caso, a onda resultante é dada por: \[y(x) = \sum^{10}_{i=0}a_i\cos{k_ix}\]
+        </p>
+        <p>Faça um programa que mostre os gráficos das ondas componentes e da onda
+            resultante.</p>
+
+        <output id="3_output"></output>
     </section>
 
     <a href="./index.html">home</a>

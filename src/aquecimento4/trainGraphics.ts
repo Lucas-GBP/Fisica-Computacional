@@ -93,5 +93,7 @@ export default function trainGraphics(output:HTMLOutputElement[]){
             mode: "markers"
         }]
     );
+
+    return 0;
 }
 
