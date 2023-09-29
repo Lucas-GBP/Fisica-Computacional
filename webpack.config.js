@@ -8,6 +8,7 @@ module.exports = {
     aquecimento2: "./src/aquecimento2/index.ts",
     aquecimento3: "./src/aquecimento3/index.ts",
     aquecimento4: "./src/aquecimento4/index.ts",
+    analiseDadosMeteorologicos1: "./src/analiseDadosMeteorologicos1/index.ts"
   },
   output: {
     filename: "[name].bundle.js",
