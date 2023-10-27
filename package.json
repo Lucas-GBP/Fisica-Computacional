@@ -1,23 +1,33 @@
 {
-  "name": "listas",
-  "version": "1.0.0",
-  "description": "",
-  "main": "./src/index.ts",
+  "name": "fisica-computacional-listas",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "start": "webpack-dev-server --open"
-  },
-  "keywords": [],
-  "author": "Lucas Gabriel Bitencourte Pedroso",
-  "license": "MIT",
-  "devDependencies": {
-    "@types/plotly.js-dist-min": "^2.3.1",
-    "ts-loader": "^9.4.4",
-    "typescript": "^5.2.2",
-    "webpack": "^5.88.2",
-    "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^4.15.1"
+    "start": "vite",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "plotly.js-dist-min": "^2.26.0"
+    "plotly.js-dist-min": "^2.27.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "vike": "^0.4.143",
+    "vike-react": "^0.3.0"
+  },
+  "devDependencies": {
+    "@types/plotly.js-dist-min": "^2.3.3",
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react": "^4.0.3",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5"
   }
 }

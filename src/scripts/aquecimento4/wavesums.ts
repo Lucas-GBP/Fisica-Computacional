@@ -1,5 +1,5 @@
 import Plotly from 'plotly.js-dist-min'
-import { wave } from '../aquecimento3'
+import { wave } from '../aquecimento3/waveFunctions'
 
 export default function waveSumsGraph(output:HTMLOutputElement){ 
     const wavesArray:wave[] = [
