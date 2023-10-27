@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Link } from "../../components/Link";
 
 export const Page = () => {
     return <>
@@ -7,7 +8,9 @@ export const Page = () => {
             return <Item key={index}/>
         })}
 
-        <a href="/">home</a>
+        <button>
+            <Link href="/">home</Link>
+        </button>
     </>
 }
 

@@ -1,4 +1,5 @@
 import { useEffect } from "react"
+import { Link } from "../../components/Link";
 
 export function Page(){
     useEffect(()=> {}, []);
@@ -28,6 +29,8 @@ export function Page(){
 
         </section>
 
-        <a href="/">home</a>
+        <button>
+            <Link href="/">home</Link>
+        </button>
     </>
 }

@@ -1,12 +1,21 @@
-import type { JsonType } from "../../scripts/analiseDadosMeteorologicos1";
-import jsonData from "../../assets/data/INMET_S_SC_A806_FLORIANOPOLIS_01-01-2022_A_31-12-2022.json";
+import { Link } from "../../components/Link";
+
+import dadosFlorianopolis from "../../assets/data/dadosMeteorologicos_florianopolis.json";
+import dadosBrasilia from "../../assets/data/dadosMeteorologicos_brasilia.json";
+import dadosMacapa from "../../assets/data/dadosMeteorologicos_macapa.json";
 import type {PageType} from "../../index";
+import Plot from 'react-plotly.js';
+import { useState } from "react";
+
+const dados = {
+    florianopolis: dadosFlorianopolis,
+    brasilia: dadosBrasilia,
+    macapa: dadosMacapa
+};
 
 export const Page:PageType = () => {
-    const data = jsonData as JsonType;
 
-    console.log("Hello World!");
-    console.log(data.data);
+    const [city, setCity] = useState(dados.florianopolis);
 
     return <>
         <h1>Análise de dados meteorológicos I</h1>
@@ -59,8 +68,29 @@ export const Page:PageType = () => {
             <p>
                 A sua missão será fazer o mesmo para a precipitação total, a pressão atmosférica ao nível da estação, e a correlação entre elas, e para a direção do vento, a velocidade do vento, e a correlação entre elas. Os resultados esperados para Florianópolis em 2022 estão mostrados nas figuras a seguir.
             </p>
+
+            <button onClick={() => {setCity(dados.florianopolis)}}>Florianopolis</button>
+            <button onClick={() => {setCity(dados.brasilia)}}>Brasilia</button>
+            <button onClick={() => {setCity(dados.macapa)}}>Macapa</button>
+
+            <output>
+                <Plot
+                    data={[
+                        {
+                            x: city.data.Data,
+                            y: city.data["VENTO, DIREÇÃO HORARIA (gr) (° (gr))"],
+                            type: 'bar',
+                            mode: 'lines+markers',
+                            marker: {color: 'blue'},
+                        }
+                    ]}
+                    layout={ {title: 'A Fancy Plot'} }
+                />               
+            </output>
         </section>
 
-        <a href="./">home</a>
+        <button>
+            <Link href="/">home</Link>
+        </button>
     </>
 }

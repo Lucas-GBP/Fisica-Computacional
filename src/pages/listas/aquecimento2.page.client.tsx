@@ -1,4 +1,5 @@
 import { useEffect } from "react"
+import { Link } from "../../components/Link";
 
 export const Page = () => {
     useEffect(script, []);
@@ -78,7 +79,10 @@ export const Page = () => {
             <output id="8_output_complexo"></output><br/>
             <output id="8_output_boolean"></output><br/>
         </section>
-        <a href="/">home</a>
+        
+        <button>
+            <Link href="/">home</Link>
+        </button>
     </>
 }
 

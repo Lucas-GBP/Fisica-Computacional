@@ -1,4 +1,5 @@
 import { useEffect } from "react"
+import { Link } from "../../components/Link";
 import Plotly from 'plotly.js-dist-min'
 import {wavesArray, waveSum} from "../../scripts/aquecimento3/waveFunctions"
 
@@ -76,8 +77,9 @@ export function Page() {
             <output id="3_output"></output>
         </section>
 
-        <a href="/">home</a>
-
+        <button>
+            <Link href="/">home</Link>
+        </button>
     </>
 }
 
