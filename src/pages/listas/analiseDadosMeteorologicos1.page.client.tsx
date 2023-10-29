@@ -5,10 +5,19 @@ import dadosBrasilia from "../../assets/data/dadosMeteorologicos_brasilia.json";
 import dadosMacapa from "../../assets/data/dadosMeteorologicos_macapa.json";
 import type {PageType} from "../../index";
 import Plot from 'react-plotly.js';
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 
 
 type JsonData = typeof dadosFlorianopolis;
+type newDataType = {
+    "dias x horas do ano": string[];
+    "radia\u00E7\u00E3o  medida (W/m^2)": (number | null)[];
+    "temperatura do ar (\u00BAC)": (number | null)[];
+    "precipita\u00E7\u00E3o total, hor\u00E1ria (mm)": (number | null)[];
+    "press\u00E3o atmosferica, hor\u00E1ria (mbar)": (number | null)[];
+    "dire\u00E7\u00E3o do vento (graus)": (number | null)[];
+    "velocidade do vento (m/s)": (number | null)[];
+};
 const dados = {
     florianopolis: dadosFlorianopolis,
     brasilia: dadosBrasilia,
@@ -22,28 +31,16 @@ export const Page:PageType = () => {
         macapa: calculateDada(dados.macapa)
     }
     const [isLoading, setLoading] = useState(true);
-    const city = useRef(newData.florianopolis);
-    const Graficos = useRef<JSX.Element|null>(null);
+    const [city, setCity] = useState(newData.florianopolis);
 
-    function setNewCity(newCity:{
-        "dias x horas do ano": string[];
-        "radia\u00E7\u00E3o  medida (W/m^2)": (number | null)[];
-        "temperatura do ar (\u00BAC)": (number | null)[];
-        "precipita\u00E7\u00E3o total, hor\u00E1ria (mm)": (number | null)[];
-        "press\u00E3o atmosferica, hor\u00E1ria (mbar)": (number | null)[];
-        "dire\u00E7\u00E3o do vento (graus)": (number | null)[];
-        "velocidade do vento (m/s)": (number | null)[];
-    }){
+    function setNewCity(newCity:newDataType){
         setLoading(true);
-        city.current = newCity;
+        setCity(newCity);
     }
 
     useEffect(() => {
-        console.log("Rendering");
-        Graficos.current = <Grafics city={city.current}/>;
-
         setLoading(false);
-    },[isLoading]);
+    },[city]);
 
     return <>
         <h1>Análise de dados meteorológicos I</h1>
@@ -82,7 +79,7 @@ export const Page:PageType = () => {
             <button onClick={() => {setNewCity(newData.macapa)}}>Macapa</button>
             <br/>
             <output>
-                {isLoading?<span>Loading...</span>: <>{Graficos.current}</>}
+                {isLoading?<span>Loading...</span>: <Grafics city={city}/>}
             </output>
         </section>
 
@@ -92,20 +89,8 @@ export const Page:PageType = () => {
     </>
 }
 
-function Grafics(props:{
-    city: {
-    "dias x horas do ano": string[];
-    "radia\u00E7\u00E3o  medida (W/m^2)": (number | null)[];
-    "temperatura do ar (\u00BAC)": (number | null)[];
-    "precipita\u00E7\u00E3o total, hor\u00E1ria (mm)": (number | null)[];
-    "press\u00E3o atmosferica, hor\u00E1ria (mbar)": (number | null)[];
-    "dire\u00E7\u00E3o do vento (graus)": (number | null)[];
-    "velocidade do vento (m/s)": (number | null)[];}
-}) {
+function Grafics(props:{ city: newDataType }) {
     const {city} = props;
-    useEffect(() => {
-        console.log("Grafics Render");
-    }, [])
 
     return <>
         <Plot
