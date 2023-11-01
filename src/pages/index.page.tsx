@@ -19,6 +19,9 @@ export function Page() {
           <a href='.\listas\analiseDadosMeteorologicos1'>Analise de Dados Meteorologicos 1</a>
         </li>
         <li>
+          <a href='.\listas\analiseDadosMeteorologicos2'>Análise de Dados Meteorológicos 2</a>
+        </li>
+        <li>
           <a href='.\listas\minimosQuadrados'>Minimos Quadrados</a>
         </li>
       </ul>
