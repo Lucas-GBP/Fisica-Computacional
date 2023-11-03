@@ -3,7 +3,7 @@ import { Link } from "../../components/Link";
 import dadosFlorianopolis from "../../assets/data/dadosMeteorologicos_florianopolis.json";
 import dadosBrasilia from "../../assets/data/dadosMeteorologicos_brasilia.json";
 import dadosMacapa from "../../assets/data/dadosMeteorologicos_macapa.json";
-import type {PageType} from "../../index";
+import type {PageType} from "../../types/index";
 import Plot from 'react-plotly.js';
 import { useEffect, useState } from "react";
 

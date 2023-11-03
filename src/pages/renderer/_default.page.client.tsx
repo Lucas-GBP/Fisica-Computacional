@@ -1,7 +1,7 @@
 export { render }
 import ReactDOM from "react-dom/client";
 import { PageShell } from './PageShell'
-import type { PageContextClient } from '../../index';
+import type { PageContextClient } from '../../types/index';
 
 async function render(pageContext: PageContextClient) {
   const { Page, pageProps, isHydration } = pageContext

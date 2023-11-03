@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { PageContextProvider } from '../../scripts/customHooks/usePageContext'
-import type { PageContext } from '../../index'
+import type { PageContext } from '../../types/index'
 import '../../styles/global.css'
 
 export { PageShell }
