@@ -33,8 +33,6 @@ export const Page:PageType = () => {
         brasilia: calculateNewData(dados.brasilia),
         macapa: calculateNewData(dados.macapa)
     }
-    console.log(dados);
-    console.log(newData);
 
     const [isLoading, setLoading] = useState(true);
     const [city, setCity] = useState(newData.florianopolis);
@@ -125,21 +123,30 @@ function Grafics(props:{city:NewDataType}){
                 {
                     x:city["dias"],
                     y:city["temperatura minima diária (ºC)"],
-                    type: "scatter"
+                    type: "scatter",
+                    name: "T_min"
                 },
                 {
                     x:city["dias"],
                     y:city["temperatura máxima diária (ºC)"],
-                    type: "scatter"
+                    type: "scatter",
+                    name: "T_max"
                 },
                 {
                     x:city["dias"],
                     y:city["variação temperatura diária (ºC)"],
-                    type: "scatter"
+                    type: "scatter",
+                    name: "T_Variação"
                 }
             ]}
             layout={{
-                title: 'Incidência de radiação na superfície'
+                title: 'Incidência de radiação na superfície',
+                yaxis: {
+                    title: "Temperatura (ºC)"
+                },
+                xaxis: {
+                    title: "Dia"
+                }
             }}
         />
     </>
