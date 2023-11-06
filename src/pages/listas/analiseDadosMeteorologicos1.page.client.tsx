@@ -1,5 +1,3 @@
-import { Link } from "../../components/Link";
-
 import dadosFlorianopolis from "../../assets/data/dadosMeteorologicos_florianopolis.json";
 import dadosBrasilia from "../../assets/data/dadosMeteorologicos_brasilia.json";
 import dadosMacapa from "../../assets/data/dadosMeteorologicos_macapa.json";
@@ -82,10 +80,6 @@ export const Page:PageType = () => {
                 {isLoading?<span>Loading...</span>: <Grafics city={city}/>}
             </output>
         </section>
-
-        <button>
-            <Link href="/">home</Link>
-        </button>
     </>
 }
 

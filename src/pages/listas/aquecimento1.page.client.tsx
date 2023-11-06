@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { Link } from "../../components/Link";
 
 export const Page = () => {
     return <>
@@ -7,10 +6,6 @@ export const Page = () => {
         {exercicios.map((Item, index) => {
             return <Item key={index}/>
         })}
-
-        <button>
-            <Link href="/">home</Link>
-        </button>
     </>
 }
 

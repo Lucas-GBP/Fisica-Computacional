@@ -2,6 +2,7 @@ export { render }
 import ReactDOM from "react-dom/client";
 import { PageShell } from './PageShell'
 import type { PageContextClient } from '../../types/index';
+import HomeButton from "../../components/HomeButton";
 
 async function render(pageContext: PageContextClient) {
   const { Page, pageProps, isHydration } = pageContext
@@ -12,6 +13,7 @@ async function render(pageContext: PageContextClient) {
 
   const page = <PageShell pageContext={pageContext}>
     <Page {...pageProps} />
+    <HomeButton/>
   </PageShell>
 
   if(!isHydration || rootElement.innerHTML === ''){

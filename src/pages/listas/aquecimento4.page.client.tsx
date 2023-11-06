@@ -1,5 +1,4 @@
 import { useEffect } from "react"
-import { Link } from "../../components/Link";
 import trainGraphics from "../../scripts/aquecimento4/trainGraphics"
 import inclinedPlane from "../../scripts/aquecimento4/inclinedPlane";
 import waveSumsGraph from "../../scripts/aquecimento4/wavesums";
@@ -63,10 +62,6 @@ export function Page() {
 
             <output id="3_output"></output>
         </section>
-
-        <button>
-            <Link href="/">home</Link>
-        </button>
     </>
 }
 

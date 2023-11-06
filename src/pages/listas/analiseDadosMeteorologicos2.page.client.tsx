@@ -1,4 +1,3 @@
-import { Link } from "../../components/Link";
 import Plot from 'react-plotly.js';
 import { useState, useEffect } from "react";
 
@@ -72,9 +71,6 @@ export const Page:PageType = () => {
                 {isLoading?<span>Loading...</span>: <Grafics city={city}/>}
             </output>
         </section>
-        <button>
-            <Link href="/">Home</Link>
-        </button>
     </>
 }
 
