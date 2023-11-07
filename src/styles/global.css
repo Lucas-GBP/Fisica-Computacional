@@ -78,6 +78,7 @@ section {
   padding: 1rem;
   margin: 2rem auto;
   width: min(80%, 90rem);
+  border-radius: 8px;
 }
 
 @media (prefers-color-scheme: light) {

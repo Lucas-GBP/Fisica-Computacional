@@ -31,9 +31,9 @@ async function render(pageContext: PageContextServer) {
         <link rel="icon" href="${logoUrl}" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content="${desc}" />
-        <script type="text/javascript" id="MathJax-script" async
-                src="https://cdn.jsdelivr.net/npm/mathjax@3.0.0/es5/tex-chtml.js">
-        </script>
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+        <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
         <title>${title}</title>
       </head>
       <body>

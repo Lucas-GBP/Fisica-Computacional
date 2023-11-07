@@ -1,7 +1,5 @@
-import { useEffect } from "react"
 
 export function Page(){
-    useEffect(()=> {}, []);
 
     return <>
         <h1>Ajuste de retas por mínimos quadrados</h1>
