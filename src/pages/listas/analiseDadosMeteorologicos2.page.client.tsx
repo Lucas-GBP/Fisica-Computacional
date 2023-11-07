@@ -84,8 +84,8 @@ function Grafics(props:{city:NewDataType}){
             }]}
             layout={{
                 title: 'Incidência de radiação na superfície',
-                "xaxis.title": "dias x horas do ano",
-                "yaxis.title": "radiação medida (W/m2)"
+                xaxis:{title: "dias x horas do ano"},
+                yaxis:{title: "radiação medida (W/m^2)"}
             }}
         />
         <Plot
@@ -95,7 +95,9 @@ function Grafics(props:{city:NewDataType}){
                 type: "bar"
             }]}
             layout={{
-                title: 'Densidade diária de energia na superfície em kWh/m2'
+                title: 'Densidade diária de energia na superfície em kWh/m2',
+                xaxis:{title: "dias x horas do ano"},
+                yaxis:{title: "densidade diária (kWh/m^2)"}
             }}
         />
         <Plot
@@ -105,7 +107,9 @@ function Grafics(props:{city:NewDataType}){
                 type: "bar"
             }]}
             layout={{
-                title: 'Densidade semanal de energia na superfície em kWh/m2'
+                title: 'Densidade semanal de energia na superfície em kWh/m2',
+                xaxis:{title: "semana"},
+                yaxis:{title: "densidade semanal (kWh/m^2)"}
             }}
         />
         <Plot
@@ -115,7 +119,9 @@ function Grafics(props:{city:NewDataType}){
                 type: "bar"
             }]}
             layout={{
-                title: 'Densidade mensal de energia na superfície em kWh/m2'
+                title: 'Densidade mensal de energia na superfície em kWh/m2',
+                xaxis:{title: "mês"},
+                yaxis:{title: "densidade mensal (kWh/m^2)"}
             }}
         />
         <Plot
