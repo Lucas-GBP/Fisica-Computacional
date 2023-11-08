@@ -1,7 +1,7 @@
 import { Link } from "./Link"
 
 export default function HomeButton(){
-    return <button>
-        <Link href="/">Home</Link>
-    </button>
+    return <Link href="/">
+        <button>Home</button>
+    </Link>
 }

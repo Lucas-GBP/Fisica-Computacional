@@ -184,7 +184,6 @@ function calculateNewData(city:JsonData){
     for(let i = 0; i < city.data.Data.length; i++){
         const dia = result.dias.length-1;
         const semana = Math.floor((dia+1)/7);
-        // TODO array com os meses e radiação por mes
 
         // Radiação
         if(city.data["RADIACAO GLOBAL (Kj/m²)"][i] !== null){
