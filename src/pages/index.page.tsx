@@ -24,7 +24,10 @@ export function Page() {
           <Link href='.\listas\analiseDadosMeteorologicos2'>Análise de Dados Meteorológicos 2</Link>
         </li>
         <li>
-          <Link href=".\listas\numerosAleatoriosNaoUniformes1">Números Aleatórios Não Uniformes 1</Link>
+          <Link href=".\listas\numerosAleatoriosNaoUniformes1">Números Aleatórios Não Uniformes I</Link>
+        </li>
+        <li>
+          <Link href=".\listas\numerosAleatoriosNaoUniformes2">Números Aleatórios Não Uniformes II</Link>
         </li>
         <li>
           <Link href='.\listas\minimosQuadrados'>Minimos Quadrados</Link>
