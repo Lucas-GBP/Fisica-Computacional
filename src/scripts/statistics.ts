@@ -37,3 +37,12 @@ export function genFuncTable(a:number, b:number, size:number, f:(x:number)=>numb
 
     return [x, y];
 }
+
+//TODO make this
+export function getAproximation(table:number[][], y:number){
+    const interval = [table[0][0], table[0][1]];
+
+    for(let i = 1; i < table[0].length; i++){
+        
+    }
+}
