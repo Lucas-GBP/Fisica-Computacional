@@ -10,4 +10,4 @@ npm install
 npm start
 ```
 
-Isso irá criar um servidor local e abrir uma aba em seu navegador padrão com o projeto aberto.
+Isso irá criar um servidor local, por padrão na porta :3000. É possivel acessar o site usando o endereço [http://localhost:3000](http://localhost:3000) no navegador.
