@@ -84,7 +84,11 @@ section {
 }
 
 p {
-  text-indent: 2em
+  text-indent: 2em;
+}
+
+table {
+  margin: auto;
 }
 
 @media (prefers-color-scheme: light) {

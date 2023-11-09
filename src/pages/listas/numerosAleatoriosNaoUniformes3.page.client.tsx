@@ -1,9 +1,25 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Plot from "react-plotly.js";
 import { arrayRange } from "../../scripts/arrayManipulation";
+import { randomNumber } from "../../scripts/numerosAleatorios";
+import { genFuncTable } from "../../scripts/statistics";
 
 export function Page(){
-    const degreeArr = useRef(arrayRange(0, 90, 1));
+    const [randX, setRandX] = useState(randomNumber(0, 1));
+    const [amostras, setAmostras] = useState(10);
+
+    const degreeArr = useRef(arrayRange(0, 90, 90/amostras));
+    const fdaTable = genFuncTable(0, Math.PI/2, amostras, fda);
+
+    console.log(randX);
+    console.log(getAngles(randX, amostras));
+
+    useEffect(()=>{
+        if( typeof window?.MathJax !== "undefined"){
+            window.MathJax.typesetClear();
+            window.MathJax.typeset();
+        }
+    },[randX]);
 
     return <>
         <h1>Números Aleatórios Não Uniformes III</h1>
@@ -22,14 +38,20 @@ export function Page(){
                 Os gráficos a seguir mostram a distribuição de probabilidade \(p(\theta)\) e a sua função distribuição acumulada \(y = fda(\theta)\).
             </p>
             <Plot 
-                data={[{x:degreeArr.current}]} 
+                data={[{
+                    x:degreeArr.current,
+                    y:arrayRange(0, Math.PI/2, Math.PI/(2*amostras)).map(i => (4/Math.PI)*Math.pow(Math.cos(i), 2))
+                }]} 
                 layout={{
                     xaxis:{title:"θ (graus)"},
                     yaxis:{title:"p(θ)"}
                 }}
             />
             <Plot 
-                data={[{x:degreeArr.current}]} 
+                data={[{
+                    x:degreeArr.current,
+                    y: arrayRange(0, Math.PI/2, Math.PI/(2*amostras)).map(i => (4/Math.PI)*(Math.sin(2*i)/4 + i/2))
+                }]} 
                 layout={{
                     xaxis:{title:"θ (graus)"},
                     yaxis:{title:"fda(θ)"}
@@ -44,9 +66,10 @@ export function Page(){
             <p>
                 Construa uma tabela com a \(fda(\theta)\) função de \(\theta\) para \(0\le\theta\le\pi/2\), com a precisão desejada.
             </p>
+            {renderFdaTable(fdaTable)}
         </section><section>
             <p>
-                Sorteie um número aleatório \(x\) a partir de uma distribuição uniforme, por exemplo \(x = 0,45\).
+                Sorteie um número aleatório \(x\) a partir de uma distribuição uniforme, por exemplo \(x = 0,45\).<br/> x = {randX}
             </p>
         </section><section>
             <p>
@@ -62,4 +85,42 @@ export function Page(){
             A figura a seguir mostra histogramas de números aleatórios que obedecem a esta distribuição de probabilidades, calculados a partir da tabela acima (\(\delta\theta = 15^\circ \)) e de uma tabela com a \(fda(\theta)\) de grau em grau (\(\delta\theta = 1^\circ\)).
         </section>
     </>;
+}
+
+function renderFdaTable(table:number[][]){
+    const content:JSX.Element[] = [];
+
+    for(let i = 0; i <= table[0].length; i++){
+        content[i] = <tr key={i+1}>
+            <td>{table[0][i]}</td>
+            <td>{table[1][i]}</td>
+        </tr>
+    }
+
+    return <table>
+        <tbody>
+            <tr>
+                <th>\(\theta\)</th>
+                <th>\(fda(\theta)\)</th>
+            </tr>
+            {content}
+        </tbody>
+    </table>
+}
+
+function fda(theta:number){
+    return (4/Math.PI)*(Math.sin(2*theta)/4 + theta/2);
+}
+
+function getAngles(x:number, size:number):number[]{
+    const step = Math.PI/(2*size);
+
+    let theta_a = 0;
+    let theta_b = step;
+    while(fda(theta_b) < x){
+        theta_a = theta_b;
+        theta_b += step;
+    }
+
+    return [theta_a, theta_b];
 }
