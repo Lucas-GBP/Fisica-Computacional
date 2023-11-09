@@ -1,6 +1,39 @@
 import Plot from "react-plotly.js";
+import { useState, useEffect, useRef } from "react";
+import { randGaussArray, gaussType, returnStatics, normalArray } from "../../scripts/numerosAleatorios";
+import { average, stdDeviation } from "../../scripts/statistics";
+import { arrayRange } from "../../scripts/arrayManipulation";
+
+type ValuesObject = {
+    media:number[],
+    variacao:number[],
+    algoritimos: {
+        box: number[],
+        limit: number[],
+        boxTime: number,
+        limitTime: number
+    }
+    energia: number[],
+};
 
 export function Page(){
+    const [values, setValues] = useState<ValuesObject>({
+        media: [],
+        variacao: [],
+        algoritimos: {
+            box: [],
+            limit: [],
+            boxTime: 0,
+            limitTime: 0
+        },
+        energia: []
+    });
+    const x = useRef(arrayRange(-.05, .05, .0025));
+
+    useEffect(() => {
+        setValues(generateValues());
+    }, [])
+
     return <>
         <h1>Números aleatórios não uniformes II</h1>
         <section>
@@ -32,12 +65,15 @@ export function Page(){
             </p><p>
                 Execute o seu programa 1000 vezes e produza os histogramas a seguir, que mostram as distribuições das médias e dos desvios padrão (ao quadrado e multiplicados por 12).
             </p>
+            <button onClick={() => setValues(generateValues())}>Gerar Novos Numeros</button><br/>
             <Plot
-                data={[]}
+                data={[
+                    {x: x.current, y: returnStatics(-.05, .05, .0025, values.media), type: "bar"}
+                ]}
                 layout={{}}
             />
             <Plot
-                data={[]}
+                data={[{x: x.current, y: returnStatics(.95, 1.05, .0025, values.variacao), type: "bar"}]}
                 layout={{}}
             />
         </section>
@@ -45,8 +81,12 @@ export function Page(){
             <p>
                 Implemente funções randBM() e randTCL() que retornem números aleatórios gaussianos utilizando os algoritmos de Box-Müller e o baseado no teorema central do limite, respectivamente. Use suas funções para obter distribuições com 10000 números cada, medindo o tempo que cada uma delas leva para realizar a tarefa. Produza histogramas como os mostrados a seguir (obviamente, os tempos medidos serão diferentes a cada run em cada máquina). Qual dos algoritmos é mais rápido?
             </p>
+            <button onClick={() => setValues(generateValues())}>Gerar Novos Numeros</button><br/>
             <Plot
-                data={[]}
+                data={[
+                    {x: arrayRange(-4, 4, 0.2), y: returnStatics(-4, 4, 0.2, values.algoritimos.limit), type: "bar", name: `Limit: ${values.algoritimos.limitTime.toFixed(2)}ms`},
+                    {x: arrayRange(-4, 4, 0.2), y: returnStatics(-4, 4, 0.2, values.algoritimos.box), type: "bar", name: `Box: ${values.algoritimos.boxTime.toFixed(2)}ms`}
+                ]}
                 layout={{}}
             />
         </section>
@@ -56,8 +96,9 @@ export function Page(){
             </p><p>
                 Pode ajudar saber que, para uma gaussiana, a largura à meia altura é aproximadamente \(2,4\sigma\), e que o número de eventos corresponde à área embaixo do gráfico. No gráfico a seguir, cada canal do eixo corresponde a 1 keV.
             </p>
+            <button onClick={() => setValues(generateValues())}>Gerar Novos Numeros</button><br/>
             <Plot
-                data={[]}
+                data={[{x:arrayRange(0, 1000, 5), y:returnStatics(0, 1000, 5, values.energia), type: "bar"}]}
                 layout={{
                     xaxis:{
                         title: "energia (keV)"
@@ -69,4 +110,43 @@ export function Page(){
             />
         </section>
     </>
+}
+
+function generateValues(){
+    const values:ValuesObject = {
+        media: [],
+        variacao: [],
+        algoritimos: {
+            box: [],
+            limit: [],
+            boxTime: 0,
+            limitTime: 0
+        },
+        energia: []
+    };
+
+    for(let i = 0; i < 1000; i++){
+        const gaussArr = randGaussArray(5000, gaussType.BoxMuller);
+        values.media[i] = average(gaussArr);
+        values.variacao[i] = stdDeviation(gaussArr);
+    }
+
+    const a = 10000
+    const boxTime_o = performance.now();
+    values.algoritimos.box = randGaussArray(a, gaussType.BoxMuller);
+    values.algoritimos.boxTime = performance.now() - boxTime_o;
+
+    const limitTime_o = performance.now();
+    values.algoritimos.limit = randGaussArray(a, gaussType.CentralLimite);
+    values.algoritimos.limitTime = performance.now() - limitTime_o;
+
+    const energy = [
+        normalArray(2250, 200, 50/2.4),
+        normalArray(1250, 400, 100/2.4),
+        normalArray(6000, 700, 200/2.4)
+    ]
+    values.energia = energy[0].concat(energy[1], energy[2]);
+
+    console.log(values);
+    return values;
 }
