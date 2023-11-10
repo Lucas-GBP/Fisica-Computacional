@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Plot from "react-plotly.js";
 import { arrayRange } from "../../scripts/arrayManipulation";
 import { randomNumber, randomNumberArray, returnStatics } from "../../scripts/numerosAleatorios";
@@ -18,21 +18,30 @@ const fixedStatistics = returnStatics(0, 90, fixedStep, randomNumberArray(0, 1, 
 
         return angle*360/(2*Math.PI);
     }
-))
+));
 
 export function Page(){
     const [randX, setRandX] = useState(randomNumber(0, 1));
     const [amostras, setAmostras] = useState(10);
+    const [interactions, setInteractions] = useState(6);
 
     const degreeArr = arrayRange(0, 90, 90/amostras);
     const fdaTable = genFuncTable(0, Math.PI/2, amostras, fda);
     const angles = getAngles(randX, amostras);
+    const [dada, setDada] = useState<number[]>([]);
+
+    useEffect(() => {
+        setDada(returnStatics(0, 90, fixedStep, randomNumberArray(0, 1, 75000).map(
+            (value) => {
+                const angles = getAngles(value, interactions);
+                const angle = linearInterpolation(angles[0], angles[1], fda(angles[0]), fda(angles[1]), value);
+
+                return angle*360/(2*Math.PI);
+            }
+        )))
+    }, [interactions]);
 
     console.log(getAngles(randX, amostras));
-
-    function Slite() {
-        return <><input type="range" min={1} max={30} value={amostras} onChange={(e) => setAmostras(parseInt(e.target.value))}/> <span>amostras: {amostras}</span></>
-    }
 
     return <>
         <h1>Números Aleatórios Não Uniformes III</h1>
@@ -50,7 +59,9 @@ export function Page(){
             </p><p>
                 Os gráficos a seguir mostram a distribuição de probabilidade \(p(\theta)\) e a sua função distribuição acumulada \(y = fda(\theta)\).
             </p>
-            <Slite/>
+            <input type="range" min={1} max={30} value={amostras} onChange={(e) => setAmostras(parseInt(e.target.value))} />
+            <span>amostras: {amostras}</span>
+            <br/>
             <Plot 
                 data={[{
                     x:degreeArr,
@@ -80,7 +91,8 @@ export function Page(){
             <p>
                 Construa uma tabela com a \(fda(\theta)\) função de \(\theta\) para \(0\le\theta\le\pi/2\), com a precisão desejada.
             </p>
-            <Slite/>
+            <input type="range" min={1} max={30} value={amostras} onChange={(e) => setAmostras(parseInt(e.target.value))} />
+            <span>amostras: {amostras}</span>
             {renderFdaTable(fdaTable)}
         </section><section>
             <p>
@@ -105,9 +117,8 @@ export function Page(){
             </output>
         </section><section>
             <p>
-                A figura a seguir mostra histogramas de números aleatórios que obedecem a esta distribuição de probabilidades, calculados a partir da tabela acima (\(\delta\theta = 15^\circ \)) e de uma tabela com a \(fda(\theta)\) de grau em grau {(180/( 2*amostras)).toFixed(2)} .
+                A figura a seguir mostra histogramas de números aleatórios que obedecem a esta distribuição de probabilidades, calculados a partir da tabela acima (\(\delta\theta = 15^\circ \)) e de uma tabela com a \(fda(\theta)\) de grau em grau {(180/( 2*interactions)).toFixed(2)} .
             </p>
-            <Slite/>
             <Plot 
                 data={[{
                     x:fixedAngles,
@@ -118,18 +129,13 @@ export function Page(){
                     xaxis:{title:"θ (graus)"},
                     yaxis:{title:"dN/dθ"}
                 }}
-            />
+            /><br/>
+            <input type="range" min={1} max={30} value={interactions} onChange={(e) => setInteractions(parseInt(e.target.value))} />
+            <span>interações: {interactions}</span><br/>
             <Plot 
                 data={[{
                     x: fixedAngles,
-                    y: returnStatics(0, 90, fixedStep, randomNumberArray(0, 1, 75000).map(
-                        (value) => {
-                            const angles = getAngles(value, amostras);
-                            const angle = linearInterpolation(angles[0], angles[1], fda(angles[0]), fda(angles[1]), value);
-
-                            return angle*360/(2*Math.PI);
-                        }
-                    )),
+                    y: dada,
                     type:"bar"
                 }]} 
                 layout={{
