@@ -32,6 +32,9 @@ export function Page() {
         <li>
           <Link href=".\listas\numerosAleatoriosNaoUniformes3">Números Aleatórios Não Uniformes III</Link>
         </li>
+        <li>
+          <Link href=".\listas\numerosAleatoriosNaoUniformes4">Números Aleatórios Não Uniformes IV</Link>
+        </li>
         {/*<li>
           <Link href='.\listas\minimosQuadrados'>Minimos Quadrados</Link>
         </li>*/}

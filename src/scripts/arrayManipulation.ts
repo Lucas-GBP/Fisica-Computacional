@@ -14,3 +14,13 @@ export function getLast<t>(arr:t[]){
 export function getMonth(date:string){ // aaaa/mm/dd -> aaaa/mm
     return date.slice(0, 7);
 }
+
+// Deep copy of a bidimension matrix
+export function copyMatrix<t>(matrix:t[][]){
+    const copy:t[][] = [];
+    for(let i = 0; i < matrix.length; i++){
+        copy[i] = [...matrix[i]];
+    }
+
+    return copy;
+}

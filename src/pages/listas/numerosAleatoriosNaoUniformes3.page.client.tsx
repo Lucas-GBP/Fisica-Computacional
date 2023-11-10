@@ -1,9 +1,8 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Plot from "react-plotly.js";
 import { arrayRange } from "../../scripts/arrayManipulation";
 import { randomNumber, randomNumberArray, returnStatics } from "../../scripts/numerosAleatorios";
-import { genFuncTable } from "../../scripts/statistics";
-
+import { genFuncTable, linearInterpolation } from "../../scripts/statistics";
 //
 // Essa pagina ficou uma porcaria...
 //
@@ -183,8 +182,4 @@ function getAngles(x:number, size:number):number[]{
     }
 
     return [theta_a, theta_b];
-}
-
-function linearInterpolation(ta:number, tb:number, ya:number, yb:number, x:number){
-    return ta + ((tb-ta)/(yb-ya))*(x-ya);
 }
