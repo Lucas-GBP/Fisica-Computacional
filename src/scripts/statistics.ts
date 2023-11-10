@@ -1,3 +1,5 @@
+import { randomNumberArray } from "./numerosAleatorios";
+
 // retorna a média dos elementos de "arr"
 export function average(arr:number[]){
     let avr = 0;
@@ -76,4 +78,31 @@ export function calculateFda(y:number[]){   //fda(x)
     }
 
     return fda;
+}
+
+//TODO: melhorar isso, esta O(n)
+function getIntervalFda(fda:number[], x:number){
+    let i:number;
+    for(i = 0; fda[i] <= x && i < fda.length; i++){}
+
+    return [i-1, i];
+}
+
+export function probabilityTransformation(p:{x:number[], y:number[]}, size:number, funcDA?:number[], interpolation:boolean = false){
+    const randNumbers = randomNumberArray(0, 1, size);
+    const fda = funcDA === undefined?calculateFda(calculateProbabilityDistribution(p)):funcDA;
+
+    for(let i = 0;i < randNumbers.length; i++){
+        const n = randNumbers[i];
+        const inter = getIntervalFda(fda, n);
+
+        if(!interpolation){
+            randNumbers[i] = p.x[inter[0]];
+        } else {
+            randNumbers[i] = linearInterpolation(p.x[inter[0]], p.x[inter[1]], fda[inter[0]], fda[inter[1]], n);
+        }
+    }
+    console.log(randNumbers);
+
+    return randNumbers;
 }

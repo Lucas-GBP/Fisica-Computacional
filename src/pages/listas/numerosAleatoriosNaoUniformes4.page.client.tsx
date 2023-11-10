@@ -1,7 +1,7 @@
 import Plot from "react-plotly.js";
-import { calculateFda, calculateProbabilityDistribution, getNormalizationConst } from "../../scripts/statistics";
+import { calculateFda, calculateProbabilityDistribution, getNormalizationConst, probabilityTransformation } from "../../scripts/statistics";
 import { useEffect, useState } from "react";
-import { randomNumberArray } from "../../scripts/numerosAleatorios";
+import { randomNumberArray, returnStatics } from "../../scripts/numerosAleatorios";
 import { arrayRange } from "../../scripts/arrayManipulation";
 
 const data = {
@@ -12,17 +12,27 @@ const a = getNormalizationConst({x:data.angles, y:data.events});
 const dist = calculateProbabilityDistribution({x:data.angles, y:data.events}, a);
 const fda = calculateFda(dist);
 
-//const angleList = arrayRange(0, 180, 1);
+const angleList = arrayRange(0, 180, 1);
 
 export function Page(){
     const [randNumbers, setRandNumbers] = useState<number[]>([]);
+    const [randWithInterpolation, setRandInter] = useState<number[]>([]);
 
     const randomize = () => {
-        setRandNumbers(randomNumberArray(0, 1, 100000));
+        setRandNumbers(probabilityTransformation(
+            {x:data.angles, y:data.events},
+            100000, 
+            fda,
+            false
+        ));
+        setRandInter(probabilityTransformation(
+            {x:data.angles, y:data.events},
+            100000, 
+            fda,
+            true
+        ))
     };
     useEffect(randomize, []);
-
-    console.log(randNumbers);
 
     return <>
         <h1>Números Aleatórios Não Uniformes IV</h1>
@@ -83,7 +93,14 @@ export function Page(){
             <button onClick={randomize}>Gerar novos numeros</button><br/>
             <Plot 
                 data={[{
-                    x:data.angles
+                    x:data.angles,
+                    y:returnStatics(
+                        data.angles[0],
+                        data.angles[data.angles.length-1],
+                        data.angles[data.angles.length-1]/data.angles.length,
+                        randNumbers
+                    ),
+                    type:"bar"
                 }]} 
                 layout={{
                     xaxis:{title:"ângulo"},
@@ -92,7 +109,14 @@ export function Page(){
             />
             <Plot 
                 data={[{
-                    x:data.angles
+                    x:angleList,
+                    y: returnStatics(
+                        0,
+                        180,
+                        1,
+                        randWithInterpolation
+                    ),
+                    type:"bar"
                 }]} 
                 layout={{
                     xaxis:{title:"ângulo"},
