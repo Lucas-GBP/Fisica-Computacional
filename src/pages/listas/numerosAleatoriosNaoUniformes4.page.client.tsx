@@ -1,7 +1,6 @@
 import Plot from "react-plotly.js";
-import { calculateFda, calculateProbabilityDistribution, getNormalizationConst, probabilityTransformation } from "../../scripts/statistics";
+import { calculateFda, calculateProbabilityDistribution, getNormalizationConst, probabilityTransformation, returnStatics } from "../../scripts/statistics";
 import { useEffect, useState } from "react";
-import { randomNumberArray, returnStatics } from "../../scripts/numerosAleatorios";
 import { arrayRange } from "../../scripts/arrayManipulation";
 
 const data = {

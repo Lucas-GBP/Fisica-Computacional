@@ -40,6 +40,27 @@ export function genFuncTable(a:number, b:number, size:number, f:(x:number)=>numb
     return [x, y];
 }
 
+// Retona um array com a quantidade de vezes que determinado intervalo numerico esta em "arr"
+export function returnStatics(a:number, b:number, step:number, arr:number[]){
+    const count:number[] = [];
+    if(step <= 0){
+        return count;
+    }
+    const stepInver = 1/step;
+
+    // Preenche count com zeros
+    for(let i =0; i < (b-a)*stepInver; i++){
+        count[i] = 0;
+    }
+
+    arr.map((value) => {
+        const index = Math.floor((value-a)*stepInver);
+        count[index]++;
+    })
+
+    return count;
+}
+
 export function linearInterpolation(xa:number, xb:number, ya:number, yb:number, x:number){
     return xa + ((xb-xa)/(yb-ya))*(x-ya);
 }

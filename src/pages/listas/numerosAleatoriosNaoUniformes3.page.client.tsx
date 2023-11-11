@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import Plot from "react-plotly.js";
 import { arrayRange } from "../../scripts/arrayManipulation";
-import { randomNumber, randomNumberArray, returnStatics } from "../../scripts/numerosAleatorios";
-import { genFuncTable, linearInterpolation } from "../../scripts/statistics";
+import { randomNumber, randomNumberArray } from "../../scripts/numerosAleatorios";
+import { genFuncTable, linearInterpolation, returnStatics } from "../../scripts/statistics";
 //
 // Essa pagina ficou uma porcaria...
 //

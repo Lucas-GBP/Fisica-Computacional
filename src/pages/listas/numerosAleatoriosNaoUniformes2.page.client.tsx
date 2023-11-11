@@ -1,7 +1,7 @@
 import Plot from "react-plotly.js";
 import { useState, useEffect, useRef } from "react";
-import { randGaussArray, gaussType, returnStatics, normalArray } from "../../scripts/numerosAleatorios";
-import { average, stdDeviation } from "../../scripts/statistics";
+import { randGaussArray, gaussType, normalArray } from "../../scripts/numerosAleatorios";
+import { average, stdDeviation, returnStatics } from "../../scripts/statistics";
 import { arrayRange } from "../../scripts/arrayManipulation";
 
 type ValuesObject = {

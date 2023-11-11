@@ -1,7 +1,8 @@
 import Plot from "react-plotly.js"
 import { arrayRange } from "../../scripts/arrayManipulation"
 import { useEffect, useRef, useState } from "react"
-import { randomNumberArray, returnStatics } from "../../scripts/numerosAleatorios"
+import { randomNumberArray } from "../../scripts/numerosAleatorios"
+import { returnStatics } from "../../scripts/statistics"
 
 type ValuesObject = {
     arr:number[],
