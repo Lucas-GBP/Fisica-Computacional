@@ -35,9 +35,9 @@ export function Page() {
         <li>
           <Link href=".\listas\numerosAleatoriosNaoUniformes4">Números Aleatórios Não Uniformes IV</Link>
         </li>
-        {/*<li>
+        <li>
           <Link href='.\listas\minimosQuadrados'>Minimos Quadrados</Link>
-        </li>*/}
+        </li>
       </ul>
     </>
   )
