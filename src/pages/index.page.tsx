@@ -38,6 +38,9 @@ export function Page() {
         <li>
           <Link href='.\listas\minimosQuadrados'>Minimos Quadrados</Link>
         </li>
+        <li>
+          <Link href=".\listas\interpolacaooLinear1D2D3D">Interpolação linear 1D, 2D e 3D</Link>
+        </li>
       </ul>
     </>
   )
