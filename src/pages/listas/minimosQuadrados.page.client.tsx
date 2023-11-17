@@ -1,4 +1,5 @@
 import Plot from "react-plotly.js"
+import { average, leastSquares, stdDeviation } from "../../scripts/statistics"
 
 const data = [
     {
@@ -117,18 +118,49 @@ export function Page(){
 function PlotGraphics(){
     return <>
         {data.map((element, index) => {
-            return <Plot
-                key={index}
-                data={[{
-                    x:element.x,
-                    y:element.y,
-                    type:"pointcloud"
-                }]}
-                layout={{
-                    xaxis:{range: [0,20]},
-                    yaxis:{range: [0,15]}
-                }}
-            />
+            const line = {
+                x_avr: average(element.x),
+                y_avr: average(element.y),
+                sigma_x: stdDeviation(element.x),
+                sigma_y: stdDeviation(element.y),
+                ...leastSquares(element.x, element.y)
+            };        
+
+            return <div key={index}>
+                <table>
+                    <tbody>
+                        <tr><th>Grandeza</th><th>Valor</th></tr>
+                        <tr><td>\({`\\bar{x} =`}\)</td><td>{line.x_avr.toFixed(2)}</td></tr>
+                        <tr><td>\({`\\bar{y} =`}\)</td><td>{line.y_avr.toFixed(2)}</td></tr>
+                        <tr><td>\({`\\sigma_x =`}\)</td><td>{line.sigma_x.toFixed(2)}</td></tr>
+                        <tr><td>\({`\\sigma_y =`}\)</td><td>{line.sigma_y.toFixed(2)}</td></tr>
+                        <tr><td>\({`A =`}\)</td><td>{line.A?.toFixed(2)}</td></tr>
+                        <tr><td>\({`B =`}\)</td><td>{line.B?.toFixed(2)}</td></tr>
+                        <tr><td>\({`R =`}\)</td><td>{line.R?.toFixed(2)}</td></tr>
+                    </tbody>
+                </table>
+                <Plot
+                    data={[
+                        {
+                            x:[0, 20],
+                            y:[line.A!, (line.A!+20*line.B!)],
+                            type:"scatter",
+                            mode:"lines",
+                            name: "Regressão Linear"
+                        },{
+                            x:element.x,
+                            y:element.y,
+                            type: "scatter",
+                            mode: 'markers',
+                            name: "Pontos"
+                        }
+                    ]}
+                    layout={{
+                        xaxis:{range: [0,20]},
+                        yaxis:{range: [0,15]},
+                    }}
+                />
+            </div>
         })}
     </>
 }
