@@ -13,7 +13,7 @@ const fixedAngles = arrayRange(0, 90, fixedStep); //900 amostras
 const fixedStatistics = returnStatics(0, 90, fixedStep, randomNumberArray(0, 1, 75000).map(
     (value) => {
         const angles = getAngles(value, 6);
-        const angle = linearInterpolation(angles[0], angles[1], fda(angles[0]), fda(angles[1]), value);
+        const angle = linearInterpolation(angles[0], angles[1], fda(angles[0]), fda(angles[1]), value)!;
 
         return angle*360/(2*Math.PI);
     }
@@ -33,7 +33,7 @@ export function Page(){
         setDada(returnStatics(0, 90, fixedStep, randomNumberArray(0, 1, 75000).map(
             (value) => {
                 const angles = getAngles(value, interactions);
-                const angle = linearInterpolation(angles[0], angles[1], fda(angles[0]), fda(angles[1]), value);
+                const angle = linearInterpolation(angles[0], angles[1], fda(angles[0]), fda(angles[1]), value)!;
 
                 return angle*360/(2*Math.PI);
             }

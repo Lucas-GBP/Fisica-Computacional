@@ -62,8 +62,70 @@ export function returnStatics(a:number, b:number, step:number, arr:number[]){
     return count;
 }
 
-export function linearInterpolation(xa:number, xb:number, ya:number, yb:number, x:number){
-    return xa + ((xb-xa)/(yb-ya))*(x-ya);
+export function linearInterpolation(fa:number, fb:number, xa:number, xb:number, x:number){
+    if(xb === xa){
+        return null;
+    }
+
+    return fa + ((fb-fa)/(xb-xa))*(x-xa);
+}
+
+export function linearInterpolation2D(x:number[], y:number[], f:number[][], p:{x:number, y:number}){
+    if(
+        y.length < 2 || 
+        x.length < 2 || 
+        f.length < 2 || 
+        f[0].length < 2 || 
+        f[1].length < 2
+    ){
+        return null;
+    }
+
+    const d = (p.x - x[0])/(x[1]-x[0]);
+    const q = (p.y - y[0])/(y[1]-y[0]);
+
+    return (
+        (1-d)*(1-q)*f[0][0] + 
+        d*(1-q)*f[1][0] + 
+        (1-d)*q*f[0][1] + 
+        d*q*f[1][1]
+    );
+}
+
+export function linearInterpolation3D(x:number[], y:number[], z:number[], f:number[][][], p:{x:number, y:number, z:number}){
+    if(
+        x.length<2 || 
+        y.length<2 || 
+        z.length<2 || 
+        f.length<2 ||
+        f[0].length<2 ||
+        f[1].length<2 ||
+        f[0][0].length<2 ||
+        f[1][0].length<2 ||
+        f[0][1].length<2 ||
+        f[1][1].length<2
+    ){
+        return null;
+    }
+
+    const d = {
+        x:(p.x-x[0])/(x[1]-x[0]),
+        y:(p.y-y[0])/(y[1]-y[0]),
+        z:(p.z-z[0])/(z[1]-z[0])
+    };
+
+    const g:number[][][] = [];
+    g[0][1][1] = f[0][0][0]*(1-d.x) + f[1][0][0]*d.x;
+    g[0][1][2] = f[0][0][1]*(1-d.x) + f[1][0][1]*d.x;
+    g[0][2][1] = f[0][1][0]*(1-d.x) + f[1][1][0]*d.x;
+    g[0][2][2] = f[0][1][1]*(1-d.x) + f[1][1][1]*d.x;
+
+    g[0][0][1] = g[0][1][1]*(1-d.y) + g[0][2][1]*d.y;
+    g[0][0][2] = g[0][1][2]*(1-d.y) + g[0][2][2]*d.y;
+
+    g[0][0][0] = g[0][0][1]*(1-d.z) + g[0][0][2]*d.z;
+
+    return g[0][0][0];
 }
 
 export function getNormalizationConst(table:{x:number[], y:number[]}){
@@ -121,7 +183,7 @@ export function probabilityTransformation(p:{x:number[], y:number[]}, size:numbe
         if(!interpolation){
             randNumbers[i] = p.x[inter[0]];
         } else {
-            randNumbers[i] = linearInterpolation(p.x[inter[0]], p.x[inter[1]], fda[inter[0]], fda[inter[1]], n);
+            randNumbers[i] = linearInterpolation(p.x[inter[0]], p.x[inter[1]], fda[inter[0]], fda[inter[1]], n)!;
         }
     }
     console.log(randNumbers);
