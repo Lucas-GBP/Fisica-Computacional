@@ -1,4 +1,5 @@
 import { randomNumberArray } from "./numerosAleatorios";
+import { getLast } from "./arrayManipulation";
 
 // retorna a média dos elementos de "arr"
 export function average(arr:number[]){
@@ -69,6 +70,30 @@ export function linearInterpolation(fa:number, fb:number, xa:number, xb:number, 
 
     return fa + ((fb-fa)/(xb-xa))*(x-xa);
 }
+export function returnInterpolation(x:number[], f:number[]){
+    if(f.length < x.length){
+        return undefined;
+    }
+    const data1dInterpolated:{x:number[], f:(number|null)[]} = {x:[], f:[]};
+
+    for(let i = 0; i < x.length-1; i++){
+        const j = 2*i;
+        const xa = x[i];
+        const xb = x[i+1];
+        const ya = f[i];
+        const yb = f[i+1];
+
+        data1dInterpolated.x[j] = x[i];
+        data1dInterpolated.f[j] = f[i];
+        data1dInterpolated.x[j+1] = (xa+xb)/2;
+        data1dInterpolated.f[j+1] = linearInterpolation(ya, yb, xa, xb, data1dInterpolated.x[j+1]);
+    }
+    const i = x.length-1;
+    data1dInterpolated.x[i*2] = x[i];
+    data1dInterpolated.f[i*2] = f[i];
+
+    return data1dInterpolated;
+}
 
 export function linearInterpolation2D(x:number[], y:number[], f:number[][], p:{x:number, y:number}){
     if(
@@ -90,6 +115,52 @@ export function linearInterpolation2D(x:number[], y:number[], f:number[][], p:{x
         (1-d)*q*f[0][1] + 
         d*q*f[1][1]
     );
+}
+export function returnInterpolation2D(x:number[], y:number[], f:number[][]){
+    const data:{
+        x:number[],
+        y:number[],
+        f:(number|null)[][]
+    } = {x:[], y:[], f:[]};
+    for(let i = 0; i < x.length-1; i++){
+        data.x[2*i] = x[i];
+        data.x[2*i+1] = (x[i+1]+x[i])/2;
+    }
+    data.x[data.x.length] = getLast(x);
+    for(let i = 0; i < y.length-1; i++){
+        data.y[2*i] = y[i]
+        data.y[2*i+1] = (y[i+1]+y[i])/2;
+    }
+    data.y[data.y.length] = getLast(y);
+
+
+    for(let i = 0; i < data.x.length; i++){
+        const oldI = Math.floor(i/2);
+        data.f[i] = [];
+
+        for(let j = 0; j < data.y.length; j++){
+            const oldJ = Math.floor(j/2);
+
+            if((i%2 === 0 && j%2 === 0)||oldI >= x.length-1||oldJ >= y.length-1){
+                data.f[i][j] = f[oldI][oldJ];
+            } else {
+                const xp = [x[oldI], x[oldI+1]]
+                const yp = [y[oldJ], y[oldJ+1]]
+                const fp = [
+                    [f[oldI][oldJ], f[oldI][oldJ+1]],
+                    [f[oldI+1][oldJ], f[oldI+1][oldJ+1]]
+                ]
+                const p = {
+                    x: data.x[i],
+                    y: data.y[j]
+                }
+
+                data.f[i][j] = linearInterpolation2D(xp, yp, fp, p);
+            }
+        }
+    }
+
+    return data;
 }
 
 export function linearInterpolation3D(x:number[], y:number[], z:number[], f:number[][][], p:{x:number, y:number, z:number}){
@@ -114,18 +185,91 @@ export function linearInterpolation3D(x:number[], y:number[], z:number[], f:numb
         z:(p.z-z[0])/(z[1]-z[0])
     };
 
-    const g:number[][][] = [];
-    g[0][1][1] = f[0][0][0]*(1-d.x) + f[1][0][0]*d.x;
-    g[0][1][2] = f[0][0][1]*(1-d.x) + f[1][0][1]*d.x;
-    g[0][2][1] = f[0][1][0]*(1-d.x) + f[1][1][0]*d.x;
-    g[0][2][2] = f[0][1][1]*(1-d.x) + f[1][1][1]*d.x;
+    const g:number[][] = [];
+    g[0] = [];
+    g[1] = [];
+    g[2] = [];
 
-    g[0][0][1] = g[0][1][1]*(1-d.y) + g[0][2][1]*d.y;
-    g[0][0][2] = g[0][1][2]*(1-d.y) + g[0][2][2]*d.y;
+    g[1][1] = f[0][0][0]*(1-d.x) + f[1][0][0]*d.x;
+    g[1][2] = f[0][0][1]*(1-d.x) + f[1][0][1]*d.x;
+    g[2][1] = f[0][1][0]*(1-d.x) + f[1][1][0]*d.x;
+    g[2][2] = f[0][1][1]*(1-d.x) + f[1][1][1]*d.x;
 
-    g[0][0][0] = g[0][0][1]*(1-d.z) + g[0][0][2]*d.z;
+    g[0][1] = g[1][1]*(1-d.y) + g[2][1]*d.y;
+    g[0][2] = g[1][2]*(1-d.y) + g[2][2]*d.y;
 
-    return g[0][0][0];
+    g[0][0] = g[0][1]*(1-d.z) + g[0][2]*d.z;
+
+    return g[0][0];
+}
+export function returnInterpolation3D(x:number[], y:number[], z:number[], f:number[][][]){
+    const data:{
+        x:number[],
+        y:number[],
+        z:number[]
+        f:(number|null)[][][]
+    } = {x:[], y:[], z:[], f:[]};
+
+    for(let i = 0; i < x.length-1; i++){
+        data.x[2*i] = x[i];
+        data.x[2*i+1] = (x[i+1]+x[i])/2;
+    }
+    for(let i = 0; i < y.length-1; i++){
+        data.y[2*i] = y[i];
+        data.y[2*i+1] = (y[i+1]+y[i])/2;
+    }
+    for(let i = 0; i < z.length-1; i++){
+        data.z[2*i] = z[i];
+        data.z[2*i+1] = (z[i+1]+z[i])/2;
+    }
+
+
+    for(let i = 0; i < data.x.length; i++){
+        const oldI = Math.floor(i/2);
+        data.f[i] = [];
+
+        for(let j = 0; j < data.y.length; j++){
+            const oldJ = Math.floor(j/2);
+            data.f[i][j] = [];
+
+            for(let k = 0; k < data.z.length; k++){
+                const oldK = Math.floor(j/2);
+                
+                if(
+                    (i%2 === 0 && j%2 === 0 && k%2 === 0)||
+                    oldI >= x.length-1||
+                    oldJ >= y.length-1||
+                    oldK >= z.length-1
+                ){
+                    data.f[i][j][k] = f[oldI][oldJ][oldK];
+                } else {
+                    const xp = [x[oldI], x[oldI+1]];
+                    const yp = [y[oldJ], y[oldJ+1]];
+                    const zp = [z[oldK], z[oldK+1]];
+                    const fp = [
+                        [
+                            [f[oldI][oldJ][oldK], f[oldI][oldJ][oldK+1]],
+                            [f[oldI][oldJ+1][oldK], f[oldI][oldJ+1][oldK+1]]
+                        ],
+                        [
+                            [f[oldI+1][oldJ][oldK], f[oldI+1][oldJ][oldK+1]],
+                            [f[oldI+1][oldJ+1][oldK], f[oldI+1][oldJ+1][oldK+1]]
+                        ]
+                    ];
+                    const p = {
+                        x: data.x[i],
+                        y: data.y[j],
+                        z: data.z[k]
+                    }
+                    
+                    data.f[i][j][k] = linearInterpolation3D(xp, yp, zp,fp, p);
+                }
+                
+            }
+        }
+    }
+
+    return data;
 }
 
 export function getNormalizationConst(table:{x:number[], y:number[]}){
@@ -186,7 +330,6 @@ export function probabilityTransformation(p:{x:number[], y:number[]}, size:numbe
             randNumbers[i] = linearInterpolation(p.x[inter[0]], p.x[inter[1]], fda[inter[0]], fda[inter[1]], n)!;
         }
     }
-    console.log(randNumbers);
 
     return randNumbers;
 }

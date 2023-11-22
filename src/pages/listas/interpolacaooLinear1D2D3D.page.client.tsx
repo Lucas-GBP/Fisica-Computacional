@@ -1,4 +1,8 @@
 import Plot from "react-plotly.js";
+import { Data } from "plotly.js";
+import { useEffect, useState } from "react";
+import { linearInterpolation, linearInterpolation3D, returnInterpolation2D } from "../../scripts/statistics";
+import { arrayRange, findRange } from "../../scripts/arrayManipulation";
 
 const PI = Math.PI;
 const data = {
@@ -59,11 +63,41 @@ const data = {
     }
 }
 
-console.log(data.interpolation2d.x);
-console.log(data.interpolation2d.y);
-console.log(data.interpolation2d.h);
-
 export function Page(){
+    const [inter1d, setInter1d] = useState<Data[]>([]);
+    const [inter2d, setInter2d] = useState<Data[]>([]);
+    const [inter3d, setInter3d] = useState<Data[]>([]);
+
+    useEffect(() => {
+        const data1dInterpolated = calculateOneDimensionInterpolation(data.interpolation1d);
+        const data2dInterpolated = returnInterpolation2D(data.interpolation2d.x, data.interpolation2d.y, data.interpolation2d.h);
+        const data3dInterpolated = calculateThreeDimensionInterpolation(data.interpolation3d);
+
+        setInter1d([{
+                x:data.interpolation1d.x,
+                y:data.interpolation1d.f,
+                type: "scatter", mode: "markers",
+                name:"Dados"
+            },{
+                x:data1dInterpolated.x,
+                y:data1dInterpolated.y,
+                type: "scatter", mode: "markers",
+                name: "Interpolação"
+            }
+        ]);
+        setInter2d([{
+            x: data2dInterpolated.x,
+            y: data2dInterpolated.y,
+            z: data2dInterpolated.f, // Deve ser uma matriz bidimensional
+            type: "surface",
+        }]);
+        setInter3d([{
+            x:data3dInterpolated.angle,
+            y:data3dInterpolated.temp,
+            name: "n = 5^3"
+        }]);
+    }, []);
+
     return <>
         <h1>Interpolação linear <br/> 1D, 2D e 3D</h1>
         <section>
@@ -72,7 +106,7 @@ export function Page(){
             </p><p>
                 A tabela a seguir mostra as coordenadas dos pontos cheios do gráfico. Utilize interpolações lineares para determinar as coordenadas dos pontos vazios, que dividem em três partes iguais os intervalos em \(x\) entre os pontos cheios.
             </p>
-            <Plot data={[{x:data.interpolation1d.x, y:data.interpolation1d.f}]} layout={{}}/>
+            <Plot data={inter1d} layout={{}}/>
 
         </section><section>
             <p>
@@ -88,14 +122,7 @@ export function Page(){
                 Imagine uma "ilha" quadrada de 20 km × 20 km, sobre a qual você tem medidas de altitude feitas em uma malha 5 × 5. A figura a seguir mostra, em preto, os valores medidos da altitude, e em cinza valores interpolados, em metros. Reproduza a figura.
             </p>
             <Plot
-                data={[
-                    {
-                        x: data.interpolation2d.x,
-                        y: data.interpolation2d.y,
-                        z: data.interpolation2d.h, // Deve ser uma matriz bidimensional
-                        type: "surface",
-                    }
-                ]}
+                data={inter2d}
                 layout={{
                     autosize: false,
                     scene: {
@@ -145,6 +172,81 @@ export function Page(){
             </p><p>
                 Com os dados fornecidos, você deverá obter a curva \(n = 5^3\). Apesar de parecer muito ruim, está correta dentro do que pode ser feito com a matriz de dados fornecida. No gráfico, são apresentadas também como seriam as interpolações para conjuntos de dados com \(n = 10^3\) e \(n = 20^3\) pontos, bem como os valores exatos, calculados com o modelo utilizado para gerar os pontos.
             </p>
+            <Plot
+                data={inter3d}
+                layout={{}}
+            />
         </section>
     </>;
+}
+
+function calculateOneDimensionInterpolation(data:{x:number[], f:number[]}){
+    const data1dInterpolated:{x:number[], y:(number|null)[]} = {x:[], y:[]};
+    for(let i = 0; i < data.x.length-1; i++){
+        const j = 2*i;
+        const xa = data.x[i];
+        const xb = data.x[i+1];
+        const ya = data.f[i];
+        const yb = data.f[i+1];
+
+        data1dInterpolated.x[j] = (1/3)*(xb-xa)+xa;
+        data1dInterpolated.x[j+1] = (2/3)*(xb-xa)+xa;
+        data1dInterpolated.y[j] = linearInterpolation(ya, yb, xa, xb, data1dInterpolated.x[j]);
+        data1dInterpolated.y[j+1] = linearInterpolation(ya, yb, xa, xb, data1dInterpolated.x[j+1]);
+    }
+
+    return data1dInterpolated;
+}
+
+function calculateThreeDimensionInterpolation(data:{x:number[], y:number[], z:number[], T:number[][][]}){
+    const result:{angle:number[], temp:(number|null)[]} = {
+        angle: arrayRange(0, 2*Math.PI, Math.PI/50), 
+        temp: []
+    };
+    const z = 3.4;
+    const r = 9.4;
+    const z_r = findRange(data.z, z);
+
+    if(z_r.indexes >= data.z.length-1){
+        return result;
+    }
+    
+    for(let i = 0; i < result.angle.length; i++){
+        const p = {
+            x: Math.cos(result.angle[i])*r,
+            y: Math.sin(result.angle[i])*r,
+            z: z
+        };
+
+        const x_r = findRange(data.x, p.x);
+        const y_r = findRange(data.y, p.y);
+
+        if(
+            x_r.indexes < data.x.length-1 &&
+            y_r.indexes < data.y.length-1
+        ){
+            const fp = [
+                [
+                    [
+                        data.T[x_r.indexes][y_r.indexes][z_r.indexes],
+                        data.T[x_r.indexes][y_r.indexes][z_r.indexes+1],
+                    ],[
+                        data.T[x_r.indexes][y_r.indexes+1][z_r.indexes],
+                        data.T[x_r.indexes][y_r.indexes+1][z_r.indexes+1],
+                    ]
+                ],[
+                    [
+                        data.T[x_r.indexes+1][y_r.indexes][z_r.indexes],
+                        data.T[x_r.indexes+1][y_r.indexes][z_r.indexes+1],
+                    ],[
+                        data.T[x_r.indexes+1][y_r.indexes+1][z_r.indexes],
+                        data.T[x_r.indexes+1][y_r.indexes+1][z_r.indexes+1],
+                    ]
+                ]
+            ]
+            result.temp[i] = linearInterpolation3D(x_r.interval, y_r.interval, z_r.interval, fp, p);
+        }
+    }
+
+    return result;
 }
