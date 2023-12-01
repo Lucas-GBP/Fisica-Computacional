@@ -1,6 +1,8 @@
 import Plot from "react-plotly.js";
 import { Data } from "plotly.js";
 import { useEffect, useState } from "react";
+import { arrayRange } from "../../scripts/arrayManipulation";
+import { genFuncTable } from "../../scripts/statistics";
 
 export function Page(){
     const [circuitoRL, setCircuitoRL] = useState<Data[]>([]);
@@ -101,7 +103,46 @@ export function Page(){
 }
 
 function calculateCircuitoRL():Data[]{
-    return [];
+    const timeStep = 0.01;
+    const time_o = 0;
+    const time_f = 5
+    const time = arrayRange(time_o, time_f, timeStep);
+    const vCos = genFuncTable(time_o, time_f, time_f/timeStep, (t)=>Math.cos(t*2*Math.PI))[1];
+    const vSin = genFuncTable(time_o, time_f, time_f/timeStep, (t)=>Math.sin(t*2*Math.PI))[1];
+    
+    const sqrtFunc = (t:number) => {
+        const rest = t - Math.floor(t);
+        if(rest > 0.5){
+            return 1;
+        }
+            return -1;
+    }
+    const vSqrt = genFuncTable(time_o, time_f, time_f/timeStep, sqrtFunc)[1];
+
+    return [
+        {
+            x:time,
+            y:vCos,
+            name: "V_Cos",
+            line: {
+                dash: "dot"
+            }
+        },{
+            x:time,
+            y:vSin,
+            name: "V_Sin",
+            line: {
+                dash: "dot"
+            }
+        },{
+            x:time,
+            y:vSqrt,
+            name: "V_Sqrt",
+            line: {
+                dash: "dot"
+            }
+        }
+    ];
 }
 function calculatePenduloSimples():Data[]{
     return [];
