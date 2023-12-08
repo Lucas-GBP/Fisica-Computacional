@@ -92,12 +92,24 @@ export function Page(){
             </p><p>
                 Implemente o algoritmo, reproduza o gráfico e determine o número \(N\) de períodos necessários para que a discrepância entre a amplitude inicial e a amplitude no início do período seja da ordem de 0,1% nos três casos.
             </p>
-            <Plot data={penduloSimples} layout={{}}/>
+            <Plot 
+                data={penduloSimples} 
+                layout={{yaxis:{
+                        range: [-0.5, 0.5],
+                        dtick: 0.25
+                }}}
+            />
         </section><section>
             <p>
                 Modifique o seu programa para que ele integre numericamente a equação diferencial para o pêndulo real (<strong>sem</strong> a aproximação \(\sin\theta\simeq\theta\)) e compare com a melhor aproximação feita no problema anterior. Você consegue estimar o período desse pêndulo?
             </p>
-            <Plot data={penduloPreciso} layout={{}}/>
+            <Plot 
+                data={penduloPreciso} 
+                layout={{yaxis:{
+                    range: [-0.5, 0.5],
+                    dtick: 0.25
+            }}}
+            />
         </section>
     </>;
 }
@@ -109,15 +121,33 @@ function calculateCircuitoRL():Data[]{
     const time = arrayRange(time_o, time_f, timeStep);
     const vCos = genFuncTable(time_o, time_f, time_f/timeStep, (t)=>Math.cos(t*2*Math.PI))[1];
     const vSin = genFuncTable(time_o, time_f, time_f/timeStep, (t)=>Math.sin(t*2*Math.PI))[1];
+    const i_o = 0;
+    const L = 1;
+    const R = 1/4;
     
     const sqrtFunc = (t:number) => {
         const rest = t - Math.floor(t);
         if(rest > 0.5){
-            return 1;
-        }
             return -1;
+        }
+            return 1;
     }
     const vSqrt = genFuncTable(time_o, time_f, time_f/timeStep, sqrtFunc)[1];
+
+    function current(v:number[], t:number[], L:number, R:number, i_o:number){
+        const i:number[] = [i_o];
+        for(let j = 0; j < t.length-1; j++){
+            const deltaT = t[j+1]-t[j];
+            const a = L/deltaT;
+            i[j+1] = (v[j] + a*i[j])/(R + a);
+        }
+
+        return i;
+    }
+
+    const ICos = current(vCos, time, L, R, i_o);
+    const ISin = current(vSin, time, L, R, i_o);
+    const ISqrt = current(vSqrt, time, L, R, i_o);
 
     return [
         {
@@ -125,28 +155,124 @@ function calculateCircuitoRL():Data[]{
             y:vCos,
             name: "V_Cos",
             line: {
-                dash: "dot"
+                dash: "dot",
+                color:"blue"
             }
         },{
             x:time,
             y:vSin,
             name: "V_Sin",
             line: {
-                dash: "dot"
+                dash: "dot",
+                color:"orange"
             }
         },{
             x:time,
             y:vSqrt,
             name: "V_Sqrt",
             line: {
-                dash: "dot"
+                dash: "dot",
+                color:"green"
+            }
+        },{
+            x:time,
+            y:ICos,
+            name: "I_Cos",
+            line:{
+                color:"blue"
+            }
+        },{
+            x:time,
+            y:ISin,
+            name: "I_Cos",
+            line:{
+                color:"orange"
+            }
+        },{
+            x:time,
+            y:ISqrt,
+            name: "I_Cos",
+            line:{
+                color:"green"
             }
         }
     ];
 }
 function calculatePenduloSimples():Data[]{
-    return [];
+    const l = 1.0;
+    const g = 10.0;
+    const theta_o = 1/3;
+    const omega_o = 0
+    const time_o = 0;
+    const time_f = 40;
+    const steps = [0.01, 0.001, 0.0001];
+    const time:number[][] = [];
+    const theta:number[][] = [];
+    const omega:number[][] = [];
+
+    for(let step = 0; steps.length > step; step++){
+        time[step] = arrayRange(time_o, time_f, steps[step]);
+        theta[step] = [theta_o];
+        omega[step] = [omega_o];
+
+        for(let i = 0; i < time[step].length-1; i++){
+            theta[step][i+1] = theta[step][i]+steps[step]*omega[step][i];
+            omega[step][i+1] = omega[step][i]-steps[step]*(g/l)*theta[step][i];
+        }
+    }
+
+    return [
+        {
+            x:time[0],
+            y:theta[0],
+            name: `${steps[0]}`
+        },{
+            x:time[1],
+            y:theta[1],
+            name: `${steps[1]}`
+        },{
+            x:time[2],
+            y:theta[2],
+            name: `${steps[2]}`
+        }
+    ];
 }
 function calculatePenduloPreciso():Data[]{
-    return [];
+    const l = 1.0;
+    const g = 10.0;
+    const theta_o = 1/3;
+    const omega_o = 0
+    const time_o = 0;
+    const time_f = 40;
+    const step = 0.001;
+    const time:number[][] = [];
+    const theta:number[][] = [];
+    const omega:number[][] = [];
+
+    for(let i = 0; 2 > i; i++){
+        time[i] = arrayRange(time_o, time_f, step);
+        theta[i] = [theta_o];
+        omega[i] = [omega_o];
+    }
+
+    for(let i = 0; i < time[0].length-1; i++){
+        theta[0][i+1] = theta[0][i]+step*omega[0][i];
+        omega[0][i+1] = omega[0][i]-step*(g/l)*theta[0][i];
+    }
+    for(let i = 0; i < time[1].length-1; i++){
+        theta[1][i+1] = theta[1][i]+step*omega[1][i];
+        omega[1][i+1] = omega[1][i]-step*(g/l)*Math.sin(theta[1][i]);
+    }
+
+    return [
+        {
+            x:time[0],
+            y:theta[0],
+            name: "aprox"
+        },{
+            x:time[1],
+            y:theta[1],
+            name: "sin(theta)"
+        }
+    ];
 }
