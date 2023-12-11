@@ -35,6 +35,9 @@ export function Page() {
         <li>
           <Link href=".\listas\espectroEletrons137C">Espectro de elétrons do 137Cs</Link>
         </li>
+        <li>
+          <Link href=".\listas\retroespalhamentoEletrons">Retroespalhamento de elétrons</Link>
+        </li>
       </ul>
     </>
   )

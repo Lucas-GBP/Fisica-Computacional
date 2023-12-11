@@ -8,8 +8,13 @@ export { PageShell }
 function PageShell({ children, pageContext }: { children: React.ReactNode; pageContext: PageContext }) {
   useEffect(() => {
     if(typeof window?.MathJax !== "undefined"){
-      window.MathJax.typeset()
-  }
+      window.MathJax.typesetPromise().then(() => {
+        window.MathJax.startup.document.clear();
+        window.MathJax.startup.document.updateDocument();
+      }).catch((error:any) => {
+        console.error('Erro durante o tiposetting:', error);
+      });
+    }
   }, [])
 
   return (
