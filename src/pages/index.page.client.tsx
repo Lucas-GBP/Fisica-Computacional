@@ -32,6 +32,9 @@ export function Page() {
         </li><li>
           <Link href=".\listas\edoEuler">Integração de EDOs Método de Euler</Link>
         </li>
+        <li>
+          <Link href=".\listas\espectroEletrons137C">Espectro de elétrons do 137Cs</Link>
+        </li>
       </ul>
     </>
   )
