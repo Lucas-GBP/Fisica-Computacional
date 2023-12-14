@@ -5,7 +5,7 @@ import { arrayRange } from "../../scripts/arrayManipulation";
 import { randomNumber, randomThetaAlpha } from "../../scripts/numerosAleatorios";
 import { returnStatics } from "../../scripts/statistics";
 
-const range = [-90, 360];
+const range = [0, Math.PI/4];
 
 export function Page(){
     const [retroeGraph, setRetroGraph] = useState<Data[]>([]);
@@ -48,22 +48,24 @@ export function Page(){
         const r = 1; //cm
         const d = 1; //cm
         const raios = randomThetaAlpha(7500);
-        const sigma = Math.atan(r/d);
 
         let detectedCount = 0;
         const detected:number[] = []
         raios.map((value) => {
-            if(isDetectedAngle(sigma, value.theta, value.alpha)){
+            if(isDetected(r, d, value.theta, value.alpha)){
                 detectedCount++;
-                //const angle = Math.abs(value.theta-Math.PI/2) + Math.abs(value.alpha-Math.PI/2);
-                //const angle = Math.abs((value.theta+value.alpha)-Math.PI)/2;
-                let angle = value.alpha+value.theta;
-                if(angle > Math.PI){
-                    angle = Math.PI - (angle - Math.PI);
+
+                const theta_ = Math.abs(Math.PI/2 - value.theta);
+                let alpha_ = value.alpha;
+                if(alpha_ > Math.PI/2){
+                    alpha_ = 2*Math.PI-value.alpha;
                 }
-                /*while(angle > Math.PI/4){
-                    angle-= Math.PI/4;
-                }*/
+
+                let angle = theta_+alpha_;
+                if(angle > Math.PI/4){
+                    angle -= 2*(angle-Math.PI/4);
+                }
+
                 detected.push(angle);
             }
         });
@@ -87,9 +89,8 @@ export function Page(){
                 register.push(angle);
             }
         })
-        console.log(detected, register);
 
-        const div = 24;
+        const div = 9;
         const space = (range[1]-range[0])/(2*div);
         const x = arrayRange(range[0]+space, range[1]+space, (range[1]-range[0])/div);
         const another:Data[] = [
@@ -97,12 +98,12 @@ export function Page(){
                 name: `no detector (${(detectedCount/raios.length*100).toFixed(1)} %)`,
                 type:"bar",
                 x:x,
-                y:returnStatics(range[0]/180*Math.PI, range[1]/180*Math.PI, (range[1]-range[0])/(div*180)*Math.PI, detected)
+                y:returnStatics(range[0], range[1], (range[1]-range[0])/(div), detected)
             },{
                 name: `registrado (${(registerCount/raios.length*100).toFixed(1)} %)`,
                 type:"bar",
                 x:x,
-                y:returnStatics(range[0]/180*Math.PI, range[1]/180*Math.PI, (range[1]-range[0])/(div*180)*Math.PI, register)
+                y:returnStatics(range[0], range[1], (range[1]-range[0])/(div), register)
             }
         ];
 
@@ -163,9 +164,9 @@ export function Page(){
                 className="PlotlyGraphics"
                 layout={{
                     xaxis:{
-                        title:"$\\theta (\\text{graus})$",
+                        title:"$\\theta (\\text{rad})$",
                         range:range,
-                        dtick:15
+                        dtick:Math.PI/(4*3)
                     },
                     yaxis:{
                         title:"$N$",
@@ -203,31 +204,25 @@ function eta(Z:number, E:number, theta:number){
 }
 
 function isDetected(r:number, d:number, theta:number, alpha:number){
-    const sigma = Math.atan(r/d); // [0, Pi/2]
-    const theta_ = Math.abs(Math.PI/2 - theta);
+    const ratio = r/d;
+    const sigma = Math.atan(ratio); // [0, Pi/2]
+    const theta_ = Math.abs(Math.PI/2 - theta)
     if(sigma < theta_){
         return false;
     }
 
-    const sinTheta = Math.sin(theta_);
-    const _sigma = sigma*sinTheta*sinTheta;
-    if((Math.PI/2-_sigma) > alpha || alpha > (Math.PI/2+_sigma)){
-        return false;
+    const r_p = d*Math.tan(theta_);
+    const r_y = Math.sqrt(r*r - r_p*r_p);
+    const beta =Math.atan(r_y/d);
+
+    let result = false;
+
+    if(beta >= alpha || alpha >= (2*Math.PI-beta)){
+        //console.table({theta_, alpha, sigma, beta, r_p, r_y, result:true});
+        //return true;
+        result = true;
     }
 
-    return true;
-}
-
-function isDetectedAngle(sigma:number, theta:number, alpha:number){
-    if(sigma < Math.abs(Math.PI/2 - theta)){
-        return false;
-    }
-
-    const sinTheta = Math.sin(theta);
-    const _sigma = sigma*sinTheta*sinTheta;
-    if((Math.PI/2-_sigma) > alpha || alpha > (Math.PI/2+_sigma)){
-        return false;
-    }
-
-    return true;
+    //console.table({theta_, alpha, sigma, beta, r_p, result});
+    return result;
 }
