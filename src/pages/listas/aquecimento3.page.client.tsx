@@ -68,7 +68,7 @@ export function Page() {
             </p><p>
                 Para um caso mais realista, em que tanto o suporte quanto as esferas têm densidades não nulas e diferentes, é preciso incluir a distribuição de massa do suporte, com os "vazios" onde são incrustados as esferas. Isso pode ser feito calculando-se o centro de massa de 21 hemisférios abaixo da superfície das faces e com densidade negativa (o centro de massa de um hemisfério de raio encontra-se a da sua face plana). A equação final para o centro de massa fica:
                 {`\\[
-                m_\\text{dados}\\vec{r}_\\text{dados} = M_\\text{esfs}\\vec{r}_\\text{esfs} + M_\\text{cubo}\vec{r}_\\text{cubo}-M_\\text{hems}\\vec{r}_\\text{hems}
+                m_\\text{dados}\\vec{r}_\\text{dados} = M_\\text{esfs}\\vec{r}_\\text{esfs} + M_\\text{cubo}\\vec{r}_\\text{cubo}-M_\\text{hems}\\vec{r}_\\text{hems}
                 \\]`}
             </p><p>
                 A tabela a seguir resume os resultados para um dado com \(L=1\) , esferas de raio \(r=0,1\) posicionadas como no sistema de coordenadas descrito acima, para 3 configurações de densidades ("ar/plástico", "plástico/plástico", "plástico/aço").

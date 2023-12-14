@@ -73,3 +73,18 @@ export function normalArray(size:number, xo:number, sigma:number){
 
     return arr;
 }
+
+export function randomThetaAlpha(quant:number){
+    const rand = randomNumberArray(0, 1, quant*2);
+    //const theta:number[] = [];
+    //const alpha:number[] = [];
+    const result:{theta:number, alpha:number}[] = []
+    for(let i = 0; i < quant; i++){
+        result.push({
+            theta: Math.acos(1-2*rand[i*2]),
+            alpha: 2*Math.PI*rand[i*2+1]
+        });
+    }
+
+    return result;
+}
