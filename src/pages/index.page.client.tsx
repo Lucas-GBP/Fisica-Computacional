@@ -28,15 +28,31 @@ export function Page() {
         </li><li>
           <Link href='.\listas\minimosQuadrados'>Minimos Quadrados</Link>
         </li><li>
+          Raízes de Funções
+        </li><li>
+          Derivadas
+        </li><li>
+          Integrais (trapézio, Simpson)
+        </li><li>
+          Integrais (Monte Carlo)
+        </li><li>
           <Link href=".\listas\interpolacaooLinear1D2D3D">Interpolação linear 1D, 2D e 3D</Link>
         </li><li>
           <Link href=".\listas\edoEuler">Integração de EDOs Método de Euler</Link>
-        </li>
-        <li>
+        </li><li>
+          Integração de EDOs (Runge-Kutta)
+        </li><li>
+          Relaxação e Equação de Poisson
+        </li><li>
+          Transformada de Fourier
+        </li><li>
           <Link href=".\listas\espectroEletrons137C">Espectro de elétrons do 137Cs</Link>
-        </li>
-        <li>
+        </li><li>
           <Link href=".\listas\retroespalhamentoEletrons">Retroespalhamento de elétrons</Link>
+        </li><li>
+          Transformações de Coordenadas
+        </li><li>
+          Lente Magnética
         </li>
       </ul>
     </>
