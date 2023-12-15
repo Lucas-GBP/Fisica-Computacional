@@ -4,6 +4,9 @@ import Plot from "react-plotly.js";
 import { arrayRange } from "../../scripts/arrayManipulation";
 import { matrix, matrixAddition, matrixMult, matrixSubtraction, modulo, transMatrixVector, transVectorMatrix, vector } from "../../scripts/linearAlgebra";
 
+const Ro_Theta = -Math.PI/2
+const smallNumber = 0.000000000000001;
+
 export function Page(){
     const [testGraphic, setTestGraphic] = useState<Data[]>([]);
     const [moduloGraphic, setModuloGraphic] = useState<Data[]>([]);
@@ -16,25 +19,25 @@ export function Page(){
         const l = 1.905;
         const d = 0.5;
         const size = 100;
-        const vectors:vector[][] = [];
+        const position:vector[][] = [];
         const B:vector[][] = [];
         const Bx:number[][] = [];
         const By:number[][] = [];
         const modulos:number[][] = [];
         for(let i = 0; i < size; i++){
-            vectors[i] = [];
+            position[i] = [];
             B[i] = [];
             Bx[i] = [];
             By[i] = [];
             modulos[i] = [];
 
             for(let j = 0; j < size; j++){
-                vectors[i][j] = [
+                position[i][j] = [
                     -2.5*l +(i/size)*5*l, 
-                    -2.5*l +(j/size)*5*l+0.0000000000001,
+                    -2.5*l +(j/size)*5*l+smallNumber,
                     0
                 ];
-                B[i][j] = vecBc(vectors[i][j], l, d, a);
+                B[i][j] = vecBc(position[i][j], l, d, a);
                 modulos[i][j] = modulo(B[i][j]);
                 Bx[i][j] = B[i][j][0];
                 By[i][j] = B[i][j][1];
@@ -260,7 +263,7 @@ function vecB(r:vector, l:number, a:number):vector{ // Resposta em M0/c
 function vecBc(rc:vector, l:number, d:number, a:number){
     const angulos = arrayRange(0, 5*Math.PI/3, Math.PI/3);
     let B:matrix = [[0],[0],[0]];
-    const R0 = R(Re.x, -Math.PI/2);
+    const R0 = R(Re.x, Ro_Theta);
 
     angulos.map((theta) => {
         const r = ri(rc, l, d, theta);
@@ -325,7 +328,7 @@ function R_(eixo:Re, theta:number):matrix{
 }
 
 function rc(ri:vector, l:number, d:number, theta_i:number){
-    const R0 = R(Re.x, -Math.PI/2);
+    const R0 = R(Re.x, Ro_Theta);
     const Ri = R(Re.z, theta_i)
     const T:matrix = [[l+d],[0],[0]];
 
@@ -335,7 +338,7 @@ function rc(ri:vector, l:number, d:number, theta_i:number){
     return transMatrixVector(rcm);
 }
 function ri(rc:vector, l:number, d:number, theta_i:number){
-    const R0_ = R_(Re.x, -Math.PI/2);
+    const R0_ = R_(Re.x, Ro_Theta);
     const Ri_ = R_(Re.z, theta_i);
     const T:matrix = [[l+d],[0],[0]];
 
