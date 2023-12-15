@@ -1,5 +1,27 @@
 export type matrix = number[][];
 export type vector = number[];
+export enum n{x=0, y=1, z=2}
+
+export function scalarVecMult(v:vector, a:number){
+    return v.map(i => i*a);
+}
+
+export function vectorAdd(v1:vector, v2:vector){
+    if (v1.length !== v2.length) {
+        throw new Error('Vetores incompativeis');
+    }
+
+    return v1.map((value, index) => value+v2[index]);
+}
+
+export function vectorSub(v1:vector, v2:vector){
+    if (v1.length !== v2.length) {
+        throw new Error('Vetores incompativeis');
+    }
+
+    return v1.map((value, index) => value-v2[index]);
+}
+
 
 export function matrixMult(m1:matrix, m2:matrix) {
     const rowsM1 = m1.length;
@@ -84,6 +106,20 @@ export function transMatrixVector(m:matrix):vector {
     return v
 }
 
+export function crossProduct(v1: vector, v2: vector): vector{
+    if (v1.length !== 3 || v2.length !== 3) {
+        throw new Error('Vetores incompativeis');
+    }
+  
+    const result = [
+        v1[1] * v2[2] - v1[2] * v2[1],
+        v1[2] * v2[0] - v1[0] * v2[2],
+        v1[0] * v2[1] - v1[1] * v2[0],
+    ];
+  
+    return result;
+}
+
 export function modulo(v:vector):number{
     let sum = 0;
     v.map((i) => {
@@ -91,4 +127,10 @@ export function modulo(v:vector):number{
     })
 
     return Math.sqrt(sum);
+}
+
+export function normalizeV(v:vector):vector{
+    const mod = modulo(v);
+
+    return scalarVecMult(v, 1/mod);
 }

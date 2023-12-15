@@ -52,7 +52,7 @@ export function Page() {
         </li><li>
           <Link href=".\listas\transformacaoCoordenadas">Transformações de Coordenadas</Link>
         </li><li>
-          Lente Magnética
+          <Link href=".\listas\lenteMagnetica">Lente Magnética</Link>
         </li>
       </ul>
     </>
