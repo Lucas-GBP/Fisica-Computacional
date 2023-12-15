@@ -50,7 +50,7 @@ export function Page() {
         </li><li>
           <Link href=".\listas\retroespalhamentoEletrons">Retroespalhamento de elétrons</Link>
         </li><li>
-          Transformações de Coordenadas
+          <Link href=".\listas\transformacaoCoordenadas">Transformações de Coordenadas</Link>
         </li><li>
           Lente Magnética
         </li>
