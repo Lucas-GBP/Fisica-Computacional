@@ -260,7 +260,7 @@ function vecB(r:vector, l:number, a:number):vector{ // Resposta em M0/c
 }
 
 // TODO melhorar isso... ele esta calculando as matrizes de transformação a cada ponto
-function vecBc(rc:vector, l:number, d:number, a:number){
+export function vecBc(rc:vector, l:number, d:number, a:number){
     const angulos = arrayRange(0, 5*Math.PI/3, Math.PI/3);
     let B:matrix = [[0],[0],[0]];
     const R0 = R(Re.x, Ro_Theta);

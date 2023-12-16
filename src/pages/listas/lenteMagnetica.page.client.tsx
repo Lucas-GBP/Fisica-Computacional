@@ -1,27 +1,15 @@
 import { Data } from "plotly.js";
 import {useEffect, useState } from "react";
 import Plot from "react-plotly.js";
-import { crossProduct, modulo, n, normalizeV, scalarVecMult, vector, vectorAdd } from "../../scripts/linearAlgebra";
-import { J_keV, c, eletron } from "../../scripts/physicsConstants";
+import { n, vector } from "../../scripts/linearAlgebra";
+import {c, eletron } from "../../scripts/physicsConstants";
 import { randomNumber } from "../../scripts/numerosAleatorios";
 import { average, stdDeviation } from "../../scripts/statistics";
+import { v_relativeE, torricelliPosition } from "../../scripts/cinetica";
+import type { Eletron, Foton, Particle } from "../../scripts/eletromagnetismo";
+import { moveEletron } from "../../scripts/eletromagnetismo";
 
-type Eletron = {
-    E:number,
-    p:vector,
-    v:vector
-};
-type Foton = {
-    p:vector,
-    v:vector
-}
-type particle = {
-    type: "foton"|"eletron",
-    isDetected:boolean
-    p:vector[],
-    v:vector[],
-    E:number[]
-}
+
 //Todas as distâncias estão em [m]
 const range = 0.2; //Região
 const R = 0.05;     //raio das regiões do campo
@@ -31,16 +19,11 @@ const r = 0.05;     //raio do detector
 const Bo = 0.05;    //Intensidade maxima do campo [T]
 const sigma:vector = [0, 0.025, 0.025]; //Largura caracteristica do campo
 const Rmax = 4*R;
+const deltaMmas = 0.001 //Maior distência percorrida pela particula
 const razaoFE = 1/4;//A cada três eletrons é emitido um foton
 const E = 660;
 const t0 = 1;
 const tf = 100000;
-const B = (p:vector) => BCorte(
-    p, 
-    [0, Rmax/2, 0],
-    Bo,
-    sigma
-)
 
 export function Page(){
     const [graphic, setGraphic] = useState<Data[]>([]);
@@ -51,7 +34,7 @@ export function Page(){
     }, []);
 
     const emmitEletron = () => {
-        const result = emitirParticulas(250, E);
+        const result = emitirParticulas(1000, E);
 
         setTets(result.particles.map((a, i) => {
             if(a.type === "eletron"){
@@ -151,136 +134,41 @@ export function Page(){
 
 function emitirParticulas(quant:number, eletE:number){
     const vModuloE = v_relativeE(eletE, eletron.m);
-    const deltaT = 0.001/vModuloE;
+    const deltaT = deltaMmas/vModuloE;
 
-    const particles:particle[] = [];
+    const particles:Particle[] = [];
     let quantFoton = 0;
     let quantEletron = 0;
     let eletronDetected = 0;
     let fotonDetected = 0;
 
     for(let i = 0; i < quant; i++){
-        let isDetected = false;
         particles[i] = {
-            type: "eletron",
+            type: randomNumber(0, 1)<razaoFE?"foton":"eletron",
             p: [],
             E: [],
             v: [],
-            isDetected: isDetected
+            isDetected: false
         }
 
-        const calcularPhoton = () => {
-            particles[i].type = "foton";
-            quantFoton++;
-            const f:Foton[] = [{
-                p:[0, 0, dS],
-                v:genVelocity(c)
-            }]
+        switch (particles[i].type){
+            case "eletron":
+                quantEletron++;
+                calcularEletron(particles[i], deltaT, eletE, vModuloE);
 
-            for(let t = t0; t < tf; t++){
-                const lastF = f[t-1];
-                //checar se o eletron saiu do grafico
-                if(
-                    lastF.p[n.z] < -range || 
-                    lastF.p[n.z] > range ||
-                    lastF.p[n.y] < -range || 
-                    lastF.p[n.y] > range
-                ){
-                    break;
+                if(particles[i].isDetected){
+                    eletronDetected++;
                 }
+                break;
+            case "foton":
+                quantFoton++;
+                calcularPhoton(particles[i], deltaT);
 
-                f[t] = {
-                    v: lastF.v,
-                    p: position(lastF.p, lastF.v, [0,0,0], deltaT)
+                if(particles[i].isDetected){
+                    fotonDetected++;
                 }
-
-                //checar se o foton foi barrado
-                if(lastF.p[n.z] <= 0 && f[t].p[n.z] >= 0){
-                    const inter = (f[t].p[n.y]-lastF.p[n.y])/(f[t].p[n.z]-lastF.p[n.z])*(-lastF.p[n.z])+lastF.p[n.y];
-
-                    if(inter <= R && inter >= -R){
-                        f[t].p[n.y] = inter;
-                        f[t].p[n.z] = 0;
-                        break;
-                    }
-                }
-
-                //checar se o foton foi detectado
-                if(lastF.p[n.z] <= dD && f[t].p[n.z] >= dD){
-                    const inter = (f[t].p[n.y]-lastF.p[n.y])/(f[t].p[n.z]-lastF.p[n.z])*(dD - lastF.p[n.z])+lastF.p[n.y];
-
-                    if(inter <= r && inter >= -r){
-                        isDetected = true;
-                        fotonDetected++;
-                    }
-                }
-            }
-            f.map((value, index) => {
-                particles[i].p[index] = value.p;
-                particles[i].E[index] = Infinity;
-                particles[i].v[index] = value.v;
-            })
+                break;
         }
-        const calcularEletron = () => {
-            particles[i].type = "eletron";
-            quantEletron++;
-            const e:Eletron[] = [{
-                E: eletE,
-                p: [0, 0, dS],
-                v: genVelocity(vModuloE)
-            }];
-
-            for(let t = t0; t < tf; t++){
-                const lastE = e[t-1];
-
-                //checar se o eletron saiu do grafico
-                if(
-                    lastE.p[n.z] < -range || 
-                    lastE.p[n.z] > range ||
-                    lastE.p[n.y] < -range || 
-                    lastE.p[n.y] > range
-                ){
-                    break;
-                }
-
-                e[t] = updateEletron(lastE, B, deltaT);
-
-                //checar se o eletron foi barrado
-                if(lastE.p[n.z] <= 0 && e[t].p[n.z] >= 0){
-                    const inter = (e[t].p[n.y]-lastE.p[n.y])/(e[t].p[n.z]-lastE.p[n.z])*(-lastE.p[n.z])+lastE.p[n.y];
-
-                    if(inter <= R && inter >= -R){
-                        e[t].p[n.y] = inter;
-                        e[t].p[n.z] = 0;
-                        break;
-                    }
-                }
-
-                //checar se o eletron foi detectado
-                if(lastE.p[n.z] <= dD && e[t].p[n.z] >= dD){
-                    const inter = (e[t].p[n.y]-lastE.p[n.y])/(e[t].p[n.z]-lastE.p[n.z])*(dD - lastE.p[n.z])+lastE.p[n.y];
-
-                    if(inter <= r && inter >= -r){
-                        isDetected = true;
-                        eletronDetected++;
-                        break;
-                    }
-                }
-            }
-
-            e.map((value, index) => {
-                particles[i].p[index] = value.p;
-                particles[i].E[index] = value.E;
-                particles[i].v[index] = value.v;
-            })
-        }
-
-        if(randomNumber(0, 1) < razaoFE){
-            calcularPhoton();
-        } else {
-            calcularEletron();
-        }
-        particles[i].isDetected = isDetected;
     }
 
     return {
@@ -291,6 +179,13 @@ function emitirParticulas(quant:number, eletE:number){
         eletronDetected
     }
 }
+
+const B = (p:vector) => BCorte(
+    p, 
+    [0, Rmax/2, 0],
+    Bo,
+    sigma
+);
 
 function BCorte(p:vector, po:vector, Bo:number, sigma:vector):vector{ // [T]
     const sB = Math.sign(-p[n.y]);
@@ -307,46 +202,105 @@ function BCorte(p:vector, po:vector, Bo:number, sigma:vector):vector{ // [T]
     ]
 }
 
-function v_relativeE(E:number, m:number){
-    const Eo = m*c*c*(6.242*Math.pow(10, 15)); //[J -> keV]
-    const lambda = 1+E/Eo;
-    const v = c*Math.sqrt(1-1/(lambda*lambda));
+const calcularPhoton = (p:Particle, deltaT:number) => {
+    const f:Foton[] = [{
+        p:[0, 0, dS],
+        v:genVelocity(c)
+    }]
 
-    return v;
+    for(let t = t0; t < tf; t++){
+        const lastF = f[t-1];
+        //checar se o eletron saiu do grafico
+        if(
+            lastF.p[n.z] < -range || 
+            lastF.p[n.z] > range ||
+            lastF.p[n.y] < -range || 
+            lastF.p[n.y] > range
+        ){
+            break;
+        }
+
+        f[t] = {
+            v: lastF.v,
+            p: torricelliPosition(lastF.p, lastF.v, [0,0,0], deltaT)
+        }
+
+        //checar se o foton foi barrado
+        if(lastF.p[n.z] <= 0 && f[t].p[n.z] >= 0){
+            const inter = (f[t].p[n.y]-lastF.p[n.y])/(f[t].p[n.z]-lastF.p[n.z])*(-lastF.p[n.z])+lastF.p[n.y];
+
+            if(inter <= R && inter >= -R){
+                f[t].p[n.y] = inter;
+                f[t].p[n.z] = 0;
+                break;
+            }
+        }
+
+        //checar se o foton foi detectado
+        if(lastF.p[n.z] <= dD && f[t].p[n.z] >= dD){
+            const inter = (f[t].p[n.y]-lastF.p[n.y])/(f[t].p[n.z]-lastF.p[n.z])*(dD - lastF.p[n.z])+lastF.p[n.y];
+
+            if(inter <= r && inter >= -r){
+                p.isDetected = true;
+            }
+        }
+    }
+    f.map((value, index) => {
+        p.p[index] = value.p;
+        p.E[index] = Infinity;
+        p.v[index] = value.v;
+    })
 }
 
-function E_relative(v:number, m:number){
-    return (6.242*Math.pow(10, 15))*m*c*c*(Math.sqrt(1/(1-Math.pow(v/c, 2)))-1)
-}
-function position(po:vector, v:vector, a:vector, t:number){
-    const b = scalarVecMult(v, t);
-    const c = scalarVecMult(a, (t*t)/2);
+const calcularEletron = (p:Particle, deltaT:number, eletE:number, vModuloE:number) => {
+    const e:Eletron[] = [{
+        E: eletE,
+        p: [0, 0, dS],
+        v: genVelocity(vModuloE)
+    }];
 
-    return vectorAdd(po,vectorAdd(b,c));
-}
+    for(let t = t0; t < tf; t++){
+        const lastE = e[t-1];
 
-function updateEletron(e:Eletron, B:(p:vector)=>vector, deltaT:number):Eletron{
-    //const gamma = 1/Math.sqrt(1-Math.pow(vModulo/c,2));
+        //checar se o eletron saiu do grafico
+        if(
+            lastE.p[n.z] < -range || 
+            lastE.p[n.z] > range ||
+            lastE.p[n.y] < -range || 
+            lastE.p[n.y] > range
+        ){
+            break;
+        }
 
-    const a = scalarVecMult( 
-        crossProduct(e.v, B(e.p)), 
-        (eletron.q/(eletron.m))
-    );
-    const p = position(e.p, e.v, a, deltaT);
+        e[t] = moveEletron(lastE, B, deltaT)
 
-    const v = vectorAdd(e.v, scalarVecMult(a, deltaT));
-    const vModulo = modulo(v);
+        //checar se o eletron foi barrado
+        if(lastE.p[n.z] <= 0 && e[t].p[n.z] >= 0){
+            const inter = (e[t].p[n.y]-lastE.p[n.y])/(e[t].p[n.z]-lastE.p[n.z])*(-lastE.p[n.z])+lastE.p[n.y];
 
-    const E = E_relative(vModulo, eletron.m);
-    if(vModulo >= c){
-        console.error(`Einstein Puto: ${100*(vModulo/c)}%, E: ${E} keV`);
+            if(inter <= R && inter >= -R){
+                e[t].p[n.y] = inter;
+                e[t].p[n.z] = 0;
+                break;
+            }
+        }
+
+        //checar se o eletron foi detectado
+        if(lastE.p[n.z] <= dD && e[t].p[n.z] >= dD){
+            const inter = (e[t].p[n.y]-lastE.p[n.y])/(e[t].p[n.z]-lastE.p[n.z])*(dD - lastE.p[n.z])+lastE.p[n.y];
+
+            if(inter <= r && inter >= -r){
+                p.isDetected = true;
+                break;
+            }
+        }
     }
 
-    return {
-        E,
-        p,
-        v
-    }
+    e.map((value, index) => {
+        p.p[index] = value.p;
+        p.E[index] = value.E;
+        p.v[index] = value.v;
+    })
 }
 
 function genVelocity(vModulo:number):vector{

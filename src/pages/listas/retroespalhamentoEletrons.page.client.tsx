@@ -4,6 +4,7 @@ import Plot from "react-plotly.js";
 import { arrayRange } from "../../scripts/arrayManipulation";
 import { randomNumber, randomThetaAlpha } from "../../scripts/numerosAleatorios";
 import { returnStatics } from "../../scripts/statistics";
+import { eta } from "../../scripts/eletromagnetismo";
 
 const range = [0, Math.PI/4];
 
@@ -193,14 +194,6 @@ export function Page(){
             </p>
         </section>
     </>;
-}
-
-function eta(Z:number, E:number, theta:number){
-    const C = 0.2;
-    const D = 2.2;
-    const b = [0.94, 9.31, 0.60, 0.01, 14.0, 1.54, 1.64, 5.31];
-    const eta_0 = b[0]*Math.exp(-b[1]*Math.pow(Z, -b[2]))*Math.pow((1 + (b[3]+b[4]*Math.pow(Z, -b[5]))*Math.pow(E, b[6]-b[7]/Z)), -1);
-    return C*Math.pow(theta, D) + eta_0;
 }
 
 function isDetected(r:number, d:number, theta:number, alpha:number){

@@ -1,6 +1,6 @@
 export type matrix = number[][];
 export type vector = number[];
-export enum n{x=0, y=1, z=2}
+export enum n{x=0, y=1, z=2};
 
 export function scalarVecMult(v:vector, a:number):vector{
     return v.map(i => i*a);
@@ -21,7 +21,6 @@ export function vectorSub(v1:vector, v2:vector):vector{
 
     return v1.map((value, index) => value-v2[index]);
 }
-
 
 export function matrixMult(m1:matrix, m2:matrix) {
     const rowsM1 = m1.length;
@@ -133,4 +132,25 @@ export function normalizeV(v:vector):vector{
     const mod = modulo(v);
 
     return scalarVecMult(v, 1/mod);
+}
+
+export function parameterizedLine(A:vector, B:vector, t:number){
+    if (A.length !== B.length) {
+        throw new Error('Vetores incompativeis');
+    }
+
+    return A.map((a, index) => a + t*(B[index] - a));
+}
+
+export function distance(A:vector, B:vector){
+    if (A.length !== B.length) {
+        throw new Error('Vetores incompativeis');
+    }
+    
+    let count = 0;
+    A.map((a, index) => {
+        count += Math.pow((a-B[index]) ,2);
+    })
+
+    return Math.sqrt(count);
 }

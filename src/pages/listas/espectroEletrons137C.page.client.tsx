@@ -2,7 +2,8 @@ import { Data } from "plotly.js";
 import { useEffect, useRef, useState } from "react";
 import Plot from "react-plotly.js";
 import { arrayRange } from "../../scripts/arrayManipulation";
-import { calculateFda, calculateProbabilityDistribution, probabilityTransformation, returnStatics } from "../../scripts/statistics";
+import { calculateFda, calculateProbabilityDistribution, returnStatics } from "../../scripts/statistics";
+import { N, random137C } from "../../scripts/eletromagnetismo";
 
 export function Page(){
     const [grathBRho, setGrathBRho] = useState<Data>({});
@@ -13,33 +14,8 @@ export function Page(){
     const fda = useRef<number[]>([]);
     const energyEspectrum = useRef<number[]>([]);
 
-    function N(B_rho:number){
-        const S_1 = 0.7;
-        const k = 2*Math.PI/6300;
-        const G_1 = 5.3;
-        const G_2 = 1.0;
-        const G_3 = 0.3;
-        const x_1 = 3370;
-        const x_2 = 3480;
-        const x_3 = 3520;
-        const sigma_1 = 14;
-        const sigma_2 = 10;
-        const sigma_3 = 7;
-
-        const a = k*B_rho>Math.PI||k*B_rho<0?0:S_1*Math.pow(Math.sin(k*B_rho),2);
-        const b = G_1*Math.exp((-1*Math.pow(B_rho-x_1, 2))/(2*sigma_1*sigma_1));
-        const c = G_2*Math.exp((-1*Math.pow(B_rho-x_2, 2))/(2*sigma_2*sigma_2));
-        const d = G_3*Math.exp((-1*Math.pow(B_rho-x_3, 2))/(2*sigma_3*sigma_3));
-
-        return a+b+c+d;
-    }
-
     const genRandom = () => {
-        const randNumbers = probabilityTransformation(
-            {x:E.current, y:energyEspectrum.current},
-            100000,
-            fda.current, true
-        );
+        const randNumbers = random137C(100000);
 
         const statistics = returnStatics(E.current[0], E.current[E.current.length-1], E.current[E.current.length-1]/E.current.length, randNumbers);
 
@@ -156,5 +132,3 @@ export function Page(){
         </section>
     </>;
 }
-
-2023913208837

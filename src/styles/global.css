@@ -96,10 +96,14 @@ table {
 }
 
 .finalButton {
+  width: fit-content;
+  margin: auto
+}
+
+.finalButton button {
   width: 15rem;
   height: 5rem;
   font-size: 2rem;
-  margin: auto;
 }
 
 @media (prefers-color-scheme: light) {
