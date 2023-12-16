@@ -95,6 +95,13 @@ table {
   
 }
 
+.finalButton {
+  width: 15rem;
+  height: 5rem;
+  font-size: 2rem;
+  margin: auto;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

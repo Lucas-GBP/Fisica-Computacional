@@ -55,6 +55,11 @@ export function Page() {
           <Link href=".\listas\lenteMagnetica">Lente Magnética</Link>
         </li>
       </ul>
+      <div style={{margin: "auto", width: "fit-content"}}>
+        <Link href=".\listas\projetoFinal">
+          <button className="finalButton">Projeto Final</button>
+        </Link>
+      </div>
     </>
   )
 }
