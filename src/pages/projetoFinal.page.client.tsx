@@ -184,9 +184,13 @@ const B = (p:vector):vector => {
     return scalarVecMult(vecBc(p, l, 0, a), campoImas);
 };
 
-const isDetected = (po:vector, pf:vector) => isColidedCircularPlane(po, pf, pDet, rDet, n.z);
+const isDetected = (po:vector, pf:vector) => {
+    return isColidedCircularPlane(po, pf, pDet, rDet, n.z);
+}
 
-const isBlocked = (po:vector, pf:vector) => isColidedCircularPlane(po, pf, [0, 0, 0], r, n.z);
+const isBlocked = (po:vector, pf:vector) => {
+    return isColidedCircularPlane(po, pf, [0, 0, -Lb/2], r, n.z) || isColidedCircularPlane(po, pf, [0, 0, Lb/2], r, n.z)
+};
 
 function createEletrons(quant:number){
     const eletrons:Eletron[] = [];
