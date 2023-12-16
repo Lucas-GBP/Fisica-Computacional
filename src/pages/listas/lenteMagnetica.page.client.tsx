@@ -1,9 +1,10 @@
 import { Data } from "plotly.js";
 import {useEffect, useState } from "react";
 import Plot from "react-plotly.js";
-import { crossProduct, modulo, n, scalarVecMult, vector, vectorAdd } from "../../scripts/linearAlgebra";
-import { c, eletron } from "../../scripts/physicsConstants";
+import { crossProduct, modulo, n, normalizeV, scalarVecMult, vector, vectorAdd } from "../../scripts/linearAlgebra";
+import { J_keV, c, eletron } from "../../scripts/physicsConstants";
 import { randomNumber } from "../../scripts/numerosAleatorios";
+import { average, stdDeviation } from "../../scripts/statistics";
 
 type Eletron = {
     E:number,
@@ -29,13 +30,14 @@ const dD = 3*R;     //distância entre detector e centro
 const r = 0.05;     //raio do detector
 const Bo = 0.05;    //Intensidade maxima do campo [T]
 const sigma:vector = [0, 0.025, 0.025]; //Largura caracteristica do campo
+const Rmax = 4*R;
 const razaoFE = 1/4;//A cada três eletrons é emitido um foton
 const E = 660;
 const t0 = 1;
-const tf = 500;
+const tf = 100000;
 const B = (p:vector) => BCorte(
     p, 
-    [0, R, 0],
+    [0, Rmax/2, 0],
     Bo,
     sigma
 )
@@ -49,8 +51,7 @@ export function Page(){
     }, []);
 
     const emmitEletron = () => {
-        const Energias = [10, 50, 100, 200, 500, 100, 1500, 2000];
-        const result = emitirParticulas(500, E);
+        const result = emitirParticulas(250, E);
 
         setTets(result.particles.map((a, i) => {
             if(a.type === "eletron"){
@@ -73,22 +74,36 @@ export function Page(){
                 }
             };
         }))
+    }
+
+    const calcularEstatisticas = async () => {
+        const Energias = [20, 50, 100, 200, 500, 1000, 1500, 2000];
 
         const data = Energias.map(e => {
-            const size = 1000
-            let sucesso = 0
+            console.log(e);
+            const size = 10
+            const arr:number[] = []
             for(let i = 0; i < size; i++){
-                const amostra = emitirParticulas(1000, e)
-                sucesso+= amostra.eletronDetected/amostra.quantEletron;
-                console.log(i);
+                const amostra = emitirParticulas(500, e)
+                arr.push((amostra.eletronDetected/500)*100);
             }
-            sucesso /= size;
-            sucesso *= 100;
             return {
-                sucesso
+                sucesso: average(arr),
+                incerteza: stdDeviation(arr)
             }
         });
-        console.log(data);
+
+        setGraphic([{
+            x:Energias,
+            y:data.map(i=>i.sucesso),
+            type:"scatter",
+            mode:"markers",
+            error_y:{
+                type:"data",
+                array:data.map(i=>i.incerteza),
+                visible: true
+            }
+        }])
     }
 
     return <>
@@ -97,12 +112,13 @@ export function Page(){
             <p>
                 A figura a seguir mostra a transmissão do sistema para elétrons com energias entre 10 keV e 2000 keV. Na simulação, os elétrons foram emitidos no plano \(yz\). As barras de erro foram computadas considerando que a incerteza no número de partículas detetadas é dada pela raiz quadrada do número de partículas detetadas.
             </p>
+            <button onClick={calcularEstatisticas}>Calcular Estatisticas (Isso pode demorar um pouco)</button><br/>
             <Plot
                 data={graphic}
                 layout={{
                     xaxis:{
                         title:"$E(keV)$",
-                        range:[0, 2000],
+                        range:[0, 2100],
                         dtick:250
                     },
                     yaxis:{
@@ -112,10 +128,11 @@ export function Page(){
                     }
                 }}
                 className="PlotlyGraphics"
-            />
+            /><br/>
             <Plot
                 data={test}
                 layout={{
+                    title: `$E = ${E}$`,
                     width:750,
                     height:750,
                     xaxis:{
@@ -127,14 +144,14 @@ export function Page(){
                 }}
                 className="PlotlyGraphics"
             /><br/>
-            <button onClick={emmitEletron}>Lançar um Eletron</button>
+            <button onClick={emmitEletron}>Lançar Eletrons</button>
         </section>
     </>;
 }
 
 function emitirParticulas(quant:number, eletE:number){
-    const vModuloE = v_relative(eletE, eletron.m);
-    const deltaT = 3.7*Math.pow(10, -12);
+    const vModuloE = v_relativeE(eletE, eletron.m);
+    const deltaT = 0.001/vModuloE;
 
     const particles:particle[] = [];
     let quantFoton = 0;
@@ -275,7 +292,7 @@ function emitirParticulas(quant:number, eletE:number){
     }
 }
 
-function BCorte(p:vector, po:vector, Bo:number, sigma:vector):vector{
+function BCorte(p:vector, po:vector, Bo:number, sigma:vector):vector{ // [T]
     const sB = Math.sign(-p[n.y]);
     const sYo = Math.sign(p[n.y]);
     const sigma_y2 = sigma[n.y]*sigma[n.y];
@@ -290,11 +307,16 @@ function BCorte(p:vector, po:vector, Bo:number, sigma:vector):vector{
     ]
 }
 
-function v_relative(E:number, m:number){
-    return c*Math.sqrt(1 - 1/Math.pow((1+E/(m*c*c)) ,2));
+function v_relativeE(E:number, m:number){
+    const Eo = m*c*c*(6.242*Math.pow(10, 15)); //[J -> keV]
+    const lambda = 1+E/Eo;
+    const v = c*Math.sqrt(1-1/(lambda*lambda));
+
+    return v;
 }
+
 function E_relative(v:number, m:number){
-    return m*c*c*(Math.sqrt(1/(1-Math.pow(v/c, 2)))-1)
+    return (6.242*Math.pow(10, 15))*m*c*c*(Math.sqrt(1/(1-Math.pow(v/c, 2)))-1)
 }
 function position(po:vector, v:vector, a:vector, t:number){
     const b = scalarVecMult(v, t);
@@ -304,12 +326,21 @@ function position(po:vector, v:vector, a:vector, t:number){
 }
 
 function updateEletron(e:Eletron, B:(p:vector)=>vector, deltaT:number):Eletron{
-    const a = scalarVecMult( crossProduct(e.v, B(e.p)),eletron.q/eletron.m);
+    //const gamma = 1/Math.sqrt(1-Math.pow(vModulo/c,2));
+
+    const a = scalarVecMult( 
+        crossProduct(e.v, B(e.p)), 
+        (eletron.q/(eletron.m))
+    );
     const p = position(e.p, e.v, a, deltaT);
+
     const v = vectorAdd(e.v, scalarVecMult(a, deltaT));
-    
     const vModulo = modulo(v);
+
     const E = E_relative(vModulo, eletron.m);
+    if(vModulo >= c){
+        console.error(`Einstein Puto: ${100*(vModulo/c)}%, E: ${E} keV`);
+    }
 
     return {
         E,

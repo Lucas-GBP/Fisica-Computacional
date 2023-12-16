@@ -2,11 +2,11 @@ export type matrix = number[][];
 export type vector = number[];
 export enum n{x=0, y=1, z=2}
 
-export function scalarVecMult(v:vector, a:number){
+export function scalarVecMult(v:vector, a:number):vector{
     return v.map(i => i*a);
 }
 
-export function vectorAdd(v1:vector, v2:vector){
+export function vectorAdd(v1:vector, v2:vector):vector{
     if (v1.length !== v2.length) {
         throw new Error('Vetores incompativeis');
     }
@@ -14,7 +14,7 @@ export function vectorAdd(v1:vector, v2:vector){
     return v1.map((value, index) => value+v2[index]);
 }
 
-export function vectorSub(v1:vector, v2:vector){
+export function vectorSub(v1:vector, v2:vector):vector{
     if (v1.length !== v2.length) {
         throw new Error('Vetores incompativeis');
     }
