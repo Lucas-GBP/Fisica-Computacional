@@ -18,7 +18,8 @@ const deltaDMax = 0.001 // Distância maxima da particula
 const screenSize = 3*a;
 
 export function Page(){
-    const [graph, setGraph] = useState<Data[]>([])
+    const [graph, setGraph] = useState<Data[]>([]);
+    const [trans, setTrans] = useState(0);
 
     useEffect(() => {
         console.log("Página Renderizada");
@@ -126,16 +127,33 @@ export function Page(){
                 z: e.x,
             }
         }))
+
+        //
+        // Calcular trasmissão do sistema
+        let detected = 0;
+        eletronsStatus.map((i) =>{
+            if(i == "detected"){
+                detected++;
+            }
+        })
+        setTrans(detected / eletronsQuant);
     }
 
     return <>
         <h1>Projeto Final</h1>
         <section>
+            <p>
+                A sua missão é simular um sistema que consiste em (a) uma fonte de elétrons, (b)
+                uma lente magnética e (c) um detetor de elétrons e (d) obter a transmissão do sistema
+                em função da energia para uma dada configuração.
+            </p>
             <Plot
                 className="PlotlyGraphics"
                 layout={{
+                    title: `T: ${trans*100}%`,
                     width:750,
                     height:750,
+                    showlegend: false,
                     scene:{
                         aspectmode: "manual",
                         aspectratio: {
@@ -156,8 +174,8 @@ export function Page(){
                     },
                 }}
                 data={graph}
-            />
-            <button onClick={gerarGrafico}>Botão</button>
+            /><br/>
+            <button onClick={gerarGrafico}>Gerar novo Gráfico</button>
         </section>
     </>;
 }
@@ -167,6 +185,7 @@ const B = (p:vector):vector => {
 };
 
 const isDetected = (po:vector, pf:vector) => isColidedCircularPlane(po, pf, pDet, rDet, n.z);
+
 const isBlocked = (po:vector, pf:vector) => isColidedCircularPlane(po, pf, [0, 0, 0], r, n.z);
 
 function createEletrons(quant:number){
